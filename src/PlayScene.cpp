@@ -32,6 +32,8 @@ void PlayScene::update()
 {
 	updateDisplayList();
 
+	m_CheckPathNodeLOS(); // MAJOUR DROP IN FPS!!
+
 	updateCollisions();
 
 	m_pSteve->faceMouse();
@@ -278,7 +280,11 @@ void PlayScene::handleEvents()
 			SoundManager::Instance().playSound("shoot");
 		}
 	}
-	
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_G))
+	{
+		m_gridVisible = !m_gridVisible;
+		m_toggleGrid(m_gridVisible);
+	}
 }
 
 void PlayScene::start()
@@ -288,6 +294,8 @@ void PlayScene::start()
 
 	m_pBackground = new Background();
 	addChild(m_pBackground);
+
+	m_buildGrid();
 
 	//load sounds used
 	loadSounds();
@@ -385,11 +393,10 @@ void PlayScene::GUI_Function()
 	
 	ImGui::Separator();
 
-	static int shipPosition[] = { m_pSteve->getTransform()->position.x, m_pSteve->getTransform()->position.y };
-	if (ImGui::SliderInt2("Steve Position", shipPosition, 0, 800))
+	static bool gridVisible = true;
+	if (ImGui::Checkbox("Toggle Grid", &gridVisible))
 	{
-		m_pSteve->getTransform()->position.x = shipPosition[0];
-		m_pSteve->getTransform()->position.y = shipPosition[1];
+		m_toggleGrid(gridVisible);
 	}
 	
 	ImGui::Separator();
@@ -472,4 +479,104 @@ void PlayScene::loadSounds() {
 	SoundManager::Instance().load("../Assets/audio/Zombie_hurt1.ogg", "zombieHurt0", SOUND_SFX);
 	SoundManager::Instance().load("../Assets/audio/Zombie_hurt2.ogg", "zombieHurt1", SOUND_SFX);
 	SoundManager::Instance().load("../Assets/audio/Zombie_death.ogg", "zombieDeath", SOUND_SFX);
+}
+
+void PlayScene::m_buildGrid()
+{
+	auto tileSize = Config::TILE_SIZE;
+
+	// add path_nodes to the Grid
+	for (int row = 0; row < Config::ROW_NUM; ++row)
+	{
+		for (int col = 0; col < Config::COL_NUM; ++col)
+		{
+			PathNode* path_node = new PathNode();
+			path_node->getTransform()->position = glm::vec2(
+				(col * tileSize) + tileSize * 0.5f, (row * tileSize) + tileSize * 0.5f);
+			addChild(path_node);
+			m_pGrid.push_back(path_node);
+		}
+	}
+}
+
+bool PlayScene::m_CheckAgentLOS(Agent* agent, DisplayObject* object)
+{
+	// initialize
+	bool hasLOS = false;
+	agent->setHasLOS(false);
+
+	// if agent to object distance is less than or equal to LOS Distance
+	auto AgentToObjectDistance = Util::distance(agent->getTransform()->position, object->getTransform()->position);
+	if (AgentToObjectDistance <= agent->getLOSDistance())
+	{
+		std::vector<DisplayObject*> contactList;
+		for (auto display_object : getDisplayList())
+		{
+			// check if obstacle is farther than than the object
+			auto AgentToObstacleDistance = Util::distance(agent->getTransform()->position, display_object->getTransform()->position);
+
+			if (AgentToObstacleDistance <= AgentToObjectDistance)
+			{
+				if (display_object->getType() == PLAYER || display_object->getType() == OBSTACLE)
+				{
+					contactList.push_back(display_object);
+				}
+			}
+		}
+		contactList.push_back(object); // add the target to the end of the list
+		const auto agentTarget = agent->getTransform()->position + agent->getCurrentDirection() * agent->getLOSDistance();
+
+		// New version...
+		hasLOS = CollisionManager::LOSCheck(agent, agentTarget, contactList, object);
+
+		agent->setHasLOS(hasLOS);
+	}
+	return hasLOS;
+}
+
+void PlayScene::m_CheckPathNodeLOS()
+{
+	for (auto path_node : m_pGrid)
+	{
+		auto targetDirection = m_pSteve->getTransform()->position - path_node->getTransform()->position;
+		auto normalizedDirection = Util::normalize(targetDirection);
+		path_node->setCurrentDirection(normalizedDirection);
+		m_CheckAgentLOS(path_node, m_pSteve);
+	}
+}
+
+void PlayScene::m_toggleGrid(bool state)
+{
+
+	for (auto path_node : m_pGrid)
+	{
+		path_node->setVisible(state);
+	}
+}
+
+PathNode* PlayScene::m_findClosestPathNode(Agent* agent)
+{
+	auto min = INFINITY;
+	PathNode* closestPathNode = nullptr;
+
+	// Alex's extra...
+	std::vector<PathNode*> m_pNoLOSNodes;
+	for (auto path_node : m_pGrid)
+	{
+		if (path_node->hasLOS() == false)
+		{
+			m_pNoLOSNodes.push_back(path_node);
+		}
+	}
+
+	for (auto path_node : m_pNoLOSNodes) // Change to m_pGrid for Tom's
+	{
+		const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
+		if (distance < min)
+		{
+			min = distance;
+			closestPathNode = path_node;
+		}
+	}
+	return closestPathNode;
 }

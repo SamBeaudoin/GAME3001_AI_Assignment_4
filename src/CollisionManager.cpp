@@ -152,6 +152,52 @@ bool CollisionManager::lineRectCheck(const glm::vec2 line1_start, const glm::vec
 	return false;
 }
 
+bool CollisionManager::lineRectEdgeCheck(const glm::vec2 line_start, const glm::vec2 rect_start, const float rect_width, const float rect_height)
+{
+	bool state = false;
+
+	const auto x1 = line_start.x;
+	const auto y1 = line_start.y;
+
+	const auto rx = rect_start.x; // Assuming rect_start is top-left. May not be. Check back.
+	const auto ry = rect_start.y;
+	const auto rw = rect_width;
+	const auto rh = rect_height;
+
+	// Configure the left edge
+	const auto leftEdgeStart = glm::vec2(rx, ry);
+	const auto leftEdgeEnd = glm::vec2(rx, ry + rh);
+	const auto leftEdgeMidPoint = Util::lerp(leftEdgeStart, leftEdgeEnd, 0.5f);
+	// Ultra super-duper long version without temp variables...
+	// const auto leftEdgeMidPoint = Util::lerp(glm::vec2(rect_start.x, rect_start.y), glm::vec2(rect_start.x, rect_start.y + rect_height), 0.5f);
+
+	// Configure the right edge
+	const auto rightEdgeStart = glm::vec2(rx + rw, ry);
+	const auto rightEdgeEnd = glm::vec2(rx + rw, ry + rh);
+	const auto rightEdgeMidPoint = Util::lerp(rightEdgeStart, rightEdgeEnd, 0.5f);
+
+	// Configure the top edge
+	const auto topEdgeStart = glm::vec2(rx, ry);
+	const auto topEdgeEnd = glm::vec2(rx + rw, ry);
+	const auto topEdgeMidPoint = Util::lerp(topEdgeStart, topEdgeEnd, 0.5f);
+
+	// Configure the bottom edge
+	const auto bottomEdgeStart = glm::vec2(rx, ry + rh);
+	const auto bottomEdgeEnd = glm::vec2(rx + rw, ry + rh);
+	const auto bottomEdgeMidPoint = Util::lerp(bottomEdgeStart, bottomEdgeEnd, 0.5f);
+
+	// Line-line comparisons
+	const auto left = lineLineCheck(glm::vec2(x1, y1), leftEdgeMidPoint, leftEdgeStart, leftEdgeEnd);
+	const auto right = lineLineCheck(glm::vec2(x1, y1), rightEdgeMidPoint, rightEdgeStart, rightEdgeEnd);
+	const auto top = lineLineCheck(glm::vec2(x1, y1), topEdgeMidPoint, topEdgeStart, topEdgeEnd);
+	const auto bottom = lineLineCheck(glm::vec2(x1, y1), bottomEdgeMidPoint, bottomEdgeStart, bottomEdgeEnd);
+
+	// Do the check
+	if (left || right || top || bottom)
+		state = true;
+	return state;
+}
+
 int CollisionManager::minSquaredDistanceLineLine(glm::vec2 line1_start, glm::vec2 line1_end, glm::vec2 line2_start, glm::vec2 line2_end)
 {
 	auto u = line1_end - line1_start;
@@ -343,6 +389,50 @@ bool CollisionManager::LOSCheck(glm::vec2 start_point, glm::vec2 end_point, cons
 		}
 	}
 
+	// if the line does not collide with an object that is the target then LOS is false
+	return false;
+}
+
+bool CollisionManager::LOSCheck(Agent* agent, glm::vec2 end_point, const std::vector<DisplayObject*>& objects, DisplayObject* target)
+{
+	const auto start_point = agent->getTransform()->position;
+
+	for (auto object : objects)
+	{
+		auto objectOffset = glm::vec2(object->getWidth() * 0.5f, object->getHeight() * 0.5f);
+		const auto rect_start = object->getTransform()->position - objectOffset;
+		const auto width = object->getWidth();
+		const auto height = object->getHeight();
+
+		switch (object->getType())
+		{
+		case OBSTACLE:
+			if (lineRectCheck(start_point, end_point, rect_start, width, height))
+				return false;
+			break;
+		case PLAYER:
+			switch (agent->getType())
+			{
+			case PLAYER: // Ship in current example. Can 'ship' see the target.
+				if (lineRectCheck(start_point, end_point, rect_start, width, height))
+					return true;
+				break;
+			case PATH_NODE:
+				if (lineRectEdgeCheck(start_point, rect_start, width, height))
+					return true;
+				break;
+			default:
+				// non-sequitur
+				std::cout << "ERROR: " << agent->getType() << std::endl;
+				break;
+			}
+			break;
+		default:
+			// non-sequitur
+			std::cout << "ERROR: " << object->getType() << std::endl;
+			break;
+		}
+	}
 	// if the line does not collide with an object that is the target then LOS is false
 	return false;
 }

@@ -15,6 +15,7 @@
 #include "MapNodes.h"
 #include "Arrow.h"
 #include "Background.h"
+#include "PathNode.h"
 
 class PlayScene : public Scene
 {
@@ -53,6 +54,18 @@ private:
 
 	bool m_debugToggle;
 	bool m_zombieWalkToggle;
+
+	std::vector<PathNode*> m_pGrid;
+	void m_buildGrid();
+	bool m_CheckAgentLOS(Agent* agent, DisplayObject* object);
+
+	void m_CheckPathNodeLOS();
+
+	bool m_gridVisible;
+	void m_toggleGrid(bool state);
+
+	// lab 10
+	PathNode* m_findClosestPathNode(Agent* agent);
 };
 
 

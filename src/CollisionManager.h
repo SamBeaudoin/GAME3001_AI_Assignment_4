@@ -22,6 +22,8 @@ public:
 
 	static bool lineRectCheck(glm::vec2 line1_start, glm::vec2 line1_end, glm::vec2 rec_start, float rect_width, float rect_height);
 
+	static bool lineRectEdgeCheck(glm::vec2 line_start, glm::vec2 rect_start, float rect_width, float rect_height);
+
 	static int minSquaredDistanceLineLine(glm::vec2 line1_start, glm::vec2 line1_end, glm::vec2 line2_start, glm::vec2 line2_end);
 	static bool lineAABBCheck(Ship* object1, GameObject* object2);
 
@@ -32,6 +34,8 @@ public:
 
 	static bool LOSCheck(glm::vec2 start_point, glm::vec2 end_point, const std::vector<DisplayObject*>& objects, DisplayObject* target);
 	
+	static bool LOSCheck(Agent* agent, glm::vec2 end_point, const std::vector<DisplayObject*>& objects, DisplayObject* target);
+
 private:
 	CollisionManager();
 	~CollisionManager();

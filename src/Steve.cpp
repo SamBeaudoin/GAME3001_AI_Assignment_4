@@ -42,8 +42,6 @@ void Steve::draw()
 	const auto x = getTransform()->position.x;
 	const auto y = getTransform()->position.y;
 
-	
-
 	// draw le Steve
 	switch (m_state)
 	{
@@ -76,7 +74,6 @@ void Steve::draw()
 
 	SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 255, 255, 255, 255);
 }
-
 
 void Steve::update()
 {

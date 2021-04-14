@@ -25,7 +25,9 @@ public:
 	void update() override;
 	void clean() override;
 private:
+
 	bool m_DebugMode;
+
 	glm::vec2 m_middleOfNode;
 };
 
