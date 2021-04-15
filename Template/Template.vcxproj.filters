@@ -207,6 +207,15 @@
     <ClCompile Include="..\src\PathNode.cpp">
       <Filter>Game Objects</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\HealthCheckCondition.cpp">
+      <Filter>Decision\Conditions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\FleeAction.cpp">
+      <Filter>Decision\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\CloseCombatDecisionTree.cpp">
+      <Filter>Decision\Core Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
@@ -433,6 +442,15 @@
     </ClInclude>
     <ClInclude Include="..\src\PathNode.h">
       <Filter>Game Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\HealthCheckCondition.h">
+      <Filter>Decision\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\FleeAction.h">
+      <Filter>Decision\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\CloseCombatDecisionTree.h">
+      <Filter>Decision\Core Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

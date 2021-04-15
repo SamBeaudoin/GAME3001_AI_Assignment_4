@@ -58,6 +58,7 @@ void Enemy::draw()
 
 void Enemy::update()
 {
+	setIsWithinHealthThreshold(m_health > 1);
 }
 
 void Enemy::clean()

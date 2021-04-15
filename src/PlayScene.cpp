@@ -32,7 +32,7 @@ void PlayScene::update()
 {
 	updateDisplayList();
 
-	m_CheckPathNodeLOS(); // MAJOUR DROP IN FPS!!
+	m_CheckPathNodeLOS();
 
 	updateCollisions();
 
