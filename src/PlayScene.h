@@ -12,6 +12,7 @@
 #include "DecisionTree.h"
 #include "Steve.h"
 #include "Zombie.h"
+#include "Pigman.h"
 #include "MapNodes.h"
 #include "Arrow.h"
 #include "Background.h"
@@ -43,6 +44,7 @@ private:
 	Target* m_pTarget;
 	Steve* m_pSteve;
 	std::vector<Enemy*> m_pZombieArmy;
+	std::vector<Enemy*> m_pPigmanSquad;
 	std::vector<Obstacle*> m_pObstacles;
 	std::vector<MapNodes*> m_pMapNodes;
 	std::vector<Arrow*> m_pArrowQuiver;
@@ -50,10 +52,12 @@ private:
 
 	Label* m_pHealth;
 	Label* m_pZombieCount;
+	Label* m_pPigmanCount;
 	Background* m_pBackground;
 
 	bool m_debugToggle;
 	bool m_zombieWalkToggle;
+	bool m_pigmanWalkToggle;
 
 	std::vector<PathNode*> m_pGrid;
 	void m_buildGrid();

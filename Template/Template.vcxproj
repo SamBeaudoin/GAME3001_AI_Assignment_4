@@ -181,6 +181,7 @@
     <ClCompile Include="..\src\Obstacle.cpp" />
     <ClCompile Include="..\src\PathNode.cpp" />
     <ClCompile Include="..\src\PatrolAction.cpp" />
+    <ClCompile Include="..\src\Pigman.cpp" />
     <ClCompile Include="..\src\RadiusCondition.cpp" />
     <ClCompile Include="..\src\SpaceShip.cpp" />
     <ClCompile Include="..\src\Sprite.cpp" />
@@ -248,6 +249,8 @@
     <ClInclude Include="..\src\Obstacle.h" />
     <ClInclude Include="..\src\PathNode.h" />
     <ClInclude Include="..\src\PatrolAction.h" />
+    <ClInclude Include="..\src\Pigman.h" />
+    <ClInclude Include="..\src\PigmanState.h" />
     <ClInclude Include="..\src\RadiusCondition.h" />
     <ClInclude Include="..\src\SoundType.h" />
     <ClInclude Include="..\src\SpaceShip.h" />

@@ -46,6 +46,9 @@ void Zombie::draw()
 	case ZOMBIE_DAMAGED:
 		TextureManager::Instance()->playAnimation("zombie", getAnimation("damage"), x, y, 0.5f, getCurrentHeading(), 255, true);
 		break;
+	case ZOMBIE_ATTACK:
+		TextureManager::Instance()->playAnimation("zombie", getAnimation("attack"), x, y, 0.5f, getCurrentHeading(), 255, true);
+		break;
 	}
 
 	Enemy::draw();
@@ -137,4 +140,11 @@ void Zombie::m_buildAnimations()
 	for (int i = 0; i < 6; i++)
 		damage.frames.push_back(getSpriteSheet()->getFrame("zombie_damage" + std::to_string(i)));
 	setAnimation(damage);
+
+	Animation attack = Animation();
+	damage.name = "attack";
+
+	for (int i = 0; i < 11; i++)
+		attack.frames.push_back(getSpriteSheet()->getFrame("zombie_attack" + std::to_string(i)));
+	setAnimation(attack);
 }

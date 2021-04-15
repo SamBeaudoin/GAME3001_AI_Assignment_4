@@ -216,6 +216,9 @@
     <ClCompile Include="..\src\CloseCombatDecisionTree.cpp">
       <Filter>Decision\Core Components</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Pigman.cpp">
+      <Filter>Decision\Agents</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
@@ -451,6 +454,12 @@
     </ClInclude>
     <ClInclude Include="..\src\CloseCombatDecisionTree.h">
       <Filter>Decision\Core Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Pigman.h">
+      <Filter>Decision\Agents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\PigmanState.h">
+      <Filter>Enums</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

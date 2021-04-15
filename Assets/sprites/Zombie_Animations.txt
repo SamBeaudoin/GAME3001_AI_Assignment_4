@@ -1,6 +1,6 @@
 zombie_idle0 386 704 62 62
 zombie_idle1 386 638 62 62
-zombie_walk0 256 708 62 62
+zombie_walk0 256 704 62 62
 zombie_walk1 256 640 62 62
 zombie_walk2 256 576 62 62
 zombie_walk3 256 512 62 62
@@ -26,3 +26,14 @@ zombie_damage2 512 704 62 62
 zombie_damage3 449 704 62 62
 zombie_damage4 512 704 62 62
 zombie_damage5 449 704 62 62
+zombie_attack0 576 640 64 64
+zombie_attack1 576 576 64 64
+zombie_attack2 576 512 64 64
+zombie_attack3 576 448 64 64
+zombie_attack4 576 384 64 64
+zombie_attack5 576 320 64 64
+zombie_attack6 576 256 64 64
+zombie_attack7 576 192 64 64
+zombie_attack8 576 128 64 64
+zombie_attack9 576 64 64 64
+zombie_attack10 576 0 64 64

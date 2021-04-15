@@ -75,7 +75,6 @@ void PlayScene::update()
 			m_pZombieCount->setText("Zombie Count: " + std::to_string(m_pZombieArmy.size()));
 			break;
 		}
-	
 	}
 
 	// Delete Arrows
