@@ -14,7 +14,6 @@ public:
 	virtual bool Condition() override;
 private:
 	bool m_isWithinCombatRange;
-
 };
 
-#endif /* defined (__CLOSE_COMBAT_CONDITION__) */#pragma once
+#endif /* defined (__CLOSE_COMBAT_CONDITION__) */

@@ -3,9 +3,6 @@
 #define __DECISION_TREE__
 #include "TreeNode.h"
 #include "TreeNodeType.h"
-#include "LOSCondition.h"
-#include "RadiusCondition.h"
-#include "CloseCombatCondition.h"
 #include "Agent.h"
 
 class DecisionTree
@@ -21,21 +18,15 @@ public:
 	// convenince funtion
 	TreeNode* AddNode(TreeNode* parent, TreeNode* child_node, TreeNodeType type);
 	void DisplayTree();
-	void Update();
 
 	std::string MakeDecision();	// in order traversal
 
-
-private:
+	std::vector<TreeNode*> m_treeNodeList;
 	Agent* m_pAgent;
 
-	LOSCondition* m_LOSNode;
-	RadiusCondition* m_RadiusNode;
-	CloseCombatCondition* m_CloseCobatNode;
-
-	void m_buildTree();
-
-	std::vector<TreeNode*> m_treeNodeList;
+private:
+	virtual void Update() = 0;
+	virtual void m_buildTree() = 0;
 };
 
 #endif /* defined (__DECISION_TREE__) */

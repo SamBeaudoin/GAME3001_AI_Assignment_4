@@ -68,6 +68,11 @@ float Agent::getDistanceWalked() const
 	return m_distanceWalked;
 }
 
+bool Agent::getIsWithinHealthThreshold() const
+{
+	return m_isWithinHealthRange;
+}
+
 MapNodes* Agent::getDestinationNode() const
 {
 	return m_destinationNode;
@@ -146,6 +151,11 @@ MapNodes* Agent::NextNode()
 	if (m_nodeCounter == m_pNodes.size())
 		m_nodeCounter = 0;
 	return m_pNodes[m_nodeCounter];
+}
+
+void Agent::setIsWithinHealthThreshold(bool state)
+{
+	m_isWithinHealthRange = state;
 }
 
 void Agent::MakeDecision()
