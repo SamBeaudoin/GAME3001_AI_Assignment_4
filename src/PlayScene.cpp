@@ -32,7 +32,7 @@ void PlayScene::update()
 {
 	updateDisplayList();
 
-	//m_CheckPathNodeLOS();
+	m_CheckPathNodeLOS();
 
 	updateCollisions();
 
@@ -512,6 +512,9 @@ bool PlayScene::m_CheckAgentLOS(Agent* agent, DisplayObject* object)
 		std::vector<DisplayObject*> contactList;
 		for (auto display_object : getDisplayList())
 		{
+			if (display_object->getType() == PATH_NODE)
+				continue;
+
 			// check if obstacle is farther than than the object
 			auto AgentToObstacleDistance = Util::distance(agent->getTransform()->position, display_object->getTransform()->position);
 
