@@ -14,7 +14,7 @@ public:
 	CloseCombatDecisionTree();
 	~CloseCombatDecisionTree();
 
-	void Update();
+	virtual void Update();
 
 private:
 	LOSCondition* m_LOSNode;
@@ -22,7 +22,7 @@ private:
 	HealthCheckCondition* m_HealthNode;
 	CloseCombatCondition* m_CloseCobatNode;
 
-	void m_buildTree();
+	virtual void m_buildTree();
 
 };
 

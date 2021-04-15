@@ -50,8 +50,6 @@ void DecisionTree::DisplayTree()
 // in-order traversal
 std::string DecisionTree::MakeDecision()
 {
-    Update();
-
     auto currentNode = m_treeNodeList[0]; // start at root node
 
     while (!currentNode->isLeaf)

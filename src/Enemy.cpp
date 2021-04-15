@@ -96,6 +96,11 @@ void Enemy::takeDamage()
 		m_health -= 1;
 }
 
+void Enemy::MakeDecision()
+{
+	std::cout << m_decisionTree->MakeDecision() << std::endl;
+}
+
 void Enemy::m_checkBounds()
 {
 

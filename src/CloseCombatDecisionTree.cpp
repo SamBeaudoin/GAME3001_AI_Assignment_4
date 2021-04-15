@@ -6,7 +6,7 @@
 #include "FleeAction.h"
 #include <iostream>
 
-CloseCombatDecisionTree::CloseCombatDecisionTree()
+CloseCombatDecisionTree::CloseCombatDecisionTree() : DecisionTree()
 {
     m_buildTree();
 }

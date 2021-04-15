@@ -25,6 +25,7 @@ public:
 	void setTargetPosition(glm::vec2 position);
 
 	void takeDamage();
+	void MakeDecision();
 
 private:
 	void m_checkBounds();

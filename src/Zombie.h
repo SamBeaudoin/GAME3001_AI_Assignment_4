@@ -1,7 +1,7 @@
 #pragma once
 #include "Enemy.h"
 #include "ZombieState.h"
-#include "DecisionTree.h"
+#include "CloseCombatDecisionTree.h"
 
 #ifndef __ZOMBIE__
 #define __ZOMBIE__

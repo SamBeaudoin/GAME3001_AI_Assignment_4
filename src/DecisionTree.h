@@ -18,6 +18,7 @@ public:
 	// convenince funtion
 	TreeNode* AddNode(TreeNode* parent, TreeNode* child_node, TreeNodeType type);
 	void DisplayTree();
+	virtual void Update() = 0;
 
 	std::string MakeDecision();	// in order traversal
 
@@ -25,7 +26,7 @@ public:
 	Agent* m_pAgent;
 
 private:
-	virtual void Update() = 0;
+
 	virtual void m_buildTree() = 0;
 };
 

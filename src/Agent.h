@@ -54,7 +54,7 @@ public:
 	void setIsWithinHealthThreshold(bool state);
 
 	//Decision Tree
-	void MakeDecision();
+	//void MakeDecision();
 
 private:
 	void m_changeDirection();
@@ -83,9 +83,9 @@ private:
 	int m_nodeCounter;
 	int m_distanceWalked;
 
-protected:
-	//Decision Tree
-	DecisionTree* m_decisionTree;
+//protected:
+//	//Decision Tree
+//	DecisionTree* m_decisionTree;
 };
 
 

@@ -6,8 +6,7 @@
 #include <iostream>
 
 Agent::Agent() {
-	m_decisionTree = new DecisionTree();
-	m_decisionTree->setAgent(this);
+
 }
 
 Agent::~Agent() = default;
@@ -158,10 +157,10 @@ void Agent::setIsWithinHealthThreshold(bool state)
 	m_isWithinHealthRange = state;
 }
 
-void Agent::MakeDecision()
-{
-	std::cout << m_decisionTree->MakeDecision() << std::endl;
-}
+//void Agent::MakeDecision()
+//{
+//	std::cout << m_decisionTree->MakeDecision() << std::endl;
+//}
 
 void Agent::m_changeDirection()
 {

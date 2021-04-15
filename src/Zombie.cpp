@@ -15,6 +15,9 @@ Zombie::Zombie() : Enemy()
 	setWidth(62);
 	setHeight(62);
 
+	m_decisionTree = new CloseCombatDecisionTree();
+	m_decisionTree->setAgent(this);
+
 	setType(ZOMBIE);
 	setState(ZOMBIE_WALK);
 	m_soundCooldown = (rand() % 301) + 300;
@@ -67,6 +70,7 @@ void Zombie::update()
 		}
 	}
 	Enemy::update();
+	m_decisionTree->Update();
 }
 
 void Zombie::clean()

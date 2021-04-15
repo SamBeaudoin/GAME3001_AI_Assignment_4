@@ -32,7 +32,7 @@ void PlayScene::update()
 {
 	updateDisplayList();
 
-	m_CheckPathNodeLOS();
+	//m_CheckPathNodeLOS();
 
 	updateCollisions();
 
