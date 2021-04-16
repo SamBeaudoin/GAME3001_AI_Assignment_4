@@ -234,9 +234,8 @@ void Steve::m_buildAnimations()
 {
 	Animation idle = Animation();
 	idle.name = "idle";
-
-	idle.frames.push_back(getSpriteSheet()->getFrame("steve_idle0"));
-	idle.frames.push_back(getSpriteSheet()->getFrame("steve_idle1"));
+	for (int i = 0; i < 2; i++)
+		idle.frames.push_back(getSpriteSheet()->getFrame("steve_idle" + std::to_string(i)));
 	setAnimation(idle);
 
 	Animation walk = Animation();
