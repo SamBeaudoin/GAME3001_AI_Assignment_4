@@ -1,7 +1,7 @@
 #pragma once
 #include "Enemy.h"
 #include "PigmanState.h"
-#include "CloseCombatDecisionTree.h"
+#include "RangedCombatDecisionTree.h"
 
 #ifndef __PIGMAN__
 #define __PIGMAN__

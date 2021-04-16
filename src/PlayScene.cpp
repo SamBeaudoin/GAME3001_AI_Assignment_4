@@ -38,6 +38,8 @@ void PlayScene::update()
 
 	m_pSteve->faceMouse();
 
+	// For Pigman within range
+
 	for (int i = 0; i < m_pZombieArmy.size(); i++)
 	{
 		//update LOS for zombies and make a decision
@@ -186,6 +188,13 @@ void PlayScene::update()
 				break;
 			}
 		}
+	}
+
+	for (auto piggies : m_pPigmanSquad)
+	{
+		piggies->setIsHideCooldownRunning(false);
+		piggies->setHasLOS(true);
+		piggies->setIsWithinRange(true);
 	}
 }
 

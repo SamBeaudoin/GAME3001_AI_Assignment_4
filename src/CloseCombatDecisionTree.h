@@ -20,7 +20,7 @@ private:
 	LOSCondition* m_LOSNode;
 	RadiusCondition* m_RadiusNode;
 	HealthCheckCondition* m_HealthNode;
-	CloseCombatCondition* m_CloseCobatNode;
+	CloseCombatCondition* m_CloseCombatNode;
 
 	virtual void m_buildTree();
 

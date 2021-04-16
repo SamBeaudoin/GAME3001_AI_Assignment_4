@@ -18,7 +18,7 @@ void CloseCombatDecisionTree::Update()
 {
     m_LOSNode->setLOS(m_pAgent->hasLOS());
     m_RadiusNode->setIsWithinRadius(m_pAgent->withinRadius());
-    m_CloseCobatNode->setIsWithinCombatRange(m_pAgent->withinCombatRange());
+    m_CloseCombatNode->setIsWithinCombatRange(m_pAgent->withinCombatRange());
     m_HealthNode->setIsWithinHealthRange(m_pAgent->getIsWithinHealthThreshold());
 }
 
@@ -43,10 +43,10 @@ void CloseCombatDecisionTree::m_buildTree()
     AddNode(m_LOSNode, m_RadiusNode, LEFT_TREE_NODE);
     m_treeNodeList.push_back(m_RadiusNode); // Radius Condition, if LOS FAILS
 
-    m_CloseCobatNode = new CloseCombatCondition();
-    m_RadiusNode->setNodeType(CONDITION_NODE);
-    AddNode(m_LOSNode, m_CloseCobatNode, RIGHT_TREE_NODE);
-    m_treeNodeList.push_back(m_CloseCobatNode); // Close Combat Condition, if LOS SUCCEEDS
+    m_CloseCombatNode = new CloseCombatCondition();
+	m_CloseCombatNode->setNodeType(CONDITION_NODE);
+    AddNode(m_LOSNode, m_CloseCombatNode, RIGHT_TREE_NODE);
+    m_treeNodeList.push_back(m_CloseCombatNode); // Close Combat Condition, if LOS SUCCEEDS
 
     TreeNode* patrolNode = AddNode(m_RadiusNode, new PatrolAction(), LEFT_TREE_NODE);
     patrolNode->setNodeType(ACTION_NODE);
@@ -56,11 +56,11 @@ void CloseCombatDecisionTree::m_buildTree()
     moveToLOSNode->setNodeType(ACTION_NODE);
     m_treeNodeList.push_back(moveToLOSNode); // Move To LOS action, if Radius Condition SUCCEEDS
 
-    TreeNode* moveToPlayerNode = AddNode(m_CloseCobatNode, new MoveToPlayerAction(), LEFT_TREE_NODE);
+    TreeNode* moveToPlayerNode = AddNode(m_CloseCombatNode, new MoveToPlayerAction(), LEFT_TREE_NODE);
     moveToPlayerNode->setNodeType(ACTION_NODE);
     m_treeNodeList.push_back(moveToPlayerNode); // Move To Player Action, if Close Combat Condition FAILS
 
-    TreeNode* attackNode = AddNode(m_CloseCobatNode, new AttackAction(), RIGHT_TREE_NODE);
+    TreeNode* attackNode = AddNode(m_CloseCombatNode, new AttackAction(), RIGHT_TREE_NODE);
     attackNode->setNodeType(ACTION_NODE);
     m_treeNodeList.push_back(attackNode); // Attack Action, if Close Combat Condition SUCCEEDS
 }

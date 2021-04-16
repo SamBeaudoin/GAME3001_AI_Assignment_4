@@ -15,7 +15,7 @@ Pigman::Pigman() : Enemy()
 	setWidth(64);
 	setHeight(64);
 
-	m_decisionTree = new CloseCombatDecisionTree();
+	m_decisionTree = new RangedCombatDecisionTree();
 	m_decisionTree->setAgent(this);
 
 	setType(PIGMAN);
