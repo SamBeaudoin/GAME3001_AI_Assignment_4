@@ -411,6 +411,7 @@ void PlayScene::start()
 	m_pSteve= new Steve();
 	m_pSteve->getTransform()->position = glm::vec2(90.0f, 300.0f);
 	addChild(m_pSteve, 2);
+	m_pLOSDisplayObjects.push_back(m_pSteve);
 
 	//Obstacles
 	m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, -50.0f)));
@@ -435,8 +436,10 @@ void PlayScene::start()
 	m_pObstacles.push_back(new Tree(glm::vec2(525.0f, 275.0f)));
 	m_pObstacles.push_back(new Tree(glm::vec2(575.0f, 325.0f)));
 	
-	for (auto obstacle : m_pObstacles)
+	for (auto obstacle : m_pObstacles) {
 		addChild(obstacle);
+		m_pLOSDisplayObjects.push_back(obstacle);
+	}
 
 	//nodes for navigation
 	m_pMapNodes.push_back(new MapNodes(glm::vec2(55.0f,50.0f)));
@@ -564,14 +567,12 @@ void PlayScene::m_CheckForLOS(Agent* first_object, DisplayObject* target_object)
 		std::vector<DisplayObject*> contactList;
 		for (auto object : getDisplayList())
 		{
-			if (object->getType() == MAP_NODE)
-				continue;
-			// check if object is farther than than the target
-			auto ObjectToObjectDistance = Util::distance(first_object->getTransform()->position, object->getTransform()->position);
+			if (object->getType() == PLAYER || object->getType() == OBSTACLE) {
 
-			if (ObjectToObjectDistance <= ObjectToTargetDistance)
-			{
-				if ((object->getType() != first_object->getType()) && (object->getType() != target_object->getType()))
+				// check if obstacle is farther than than the object
+				auto AgentToObstacleDistance = Util::distance(first_object->getTransform()->position, object->getTransform()->position);
+
+				if (AgentToObstacleDistance <= ObjectToTargetDistance)
 				{
 					contactList.push_back(object);
 				}
@@ -579,10 +580,11 @@ void PlayScene::m_CheckForLOS(Agent* first_object, DisplayObject* target_object)
 		}
 		contactList.push_back(target_object); // add the target to the end of the list
 		bool hasLOS;
-		if (first_object->getType() == PLAYER)
-			hasLOS = CollisionManager::LOSCheck(first_object->getTransform()->position, first_object->getTransform()->position + first_object->getCurrentDirection() * first_object->getLOSDistance(), contactList, target_object);
-		else
-			hasLOS = CollisionManager::LOSCheck(first_object->getTransform()->position, target_object->getTransform()->position, contactList, target_object);
+		const auto agentTarget = first_object->getTransform()->position + first_object->getCurrentDirection() * first_object->getLOSDistance();
+		//if (first_object->getType() == PLAYER)
+			hasLOS = CollisionManager::LOSCheck(first_object, agentTarget, contactList, target_object);
+		//else
+			//hasLOS = CollisionManager::LOSCheck(first_object, target_object->getTransform()->position, contactList, target_object);
 
 		first_object->setHasLOS(hasLOS);
 	}
@@ -624,40 +626,31 @@ void PlayScene::m_buildGrid()
 	}
 }
 
-bool PlayScene::m_CheckAgentLOS(Agent* agent, DisplayObject* object)
+bool PlayScene::m_CheckForEnemyLOS(PathNode* node, Enemy* enemy)
 {
-	// initialize
 	bool hasLOS = false;
-	agent->setHasLOS(false);
 
-	// if agent to object distance is less than or equal to LOS Distance
-	auto AgentToObjectDistance = Util::distance(agent->getTransform()->position, object->getTransform()->position);
-	if (AgentToObjectDistance <= agent->getLOSDistance())
-	{
+	auto NodeToEnemyDistance = Util::distance(node->getTransform()->position, enemy->getTransform()->position);
+
+	if (NodeToEnemyDistance <= enemy->getLOSDistance()) {
 		std::vector<DisplayObject*> contactList;
-		for (auto display_object : getDisplayList())
-		{
-			if (display_object->getType() == PATH_NODE)
-				continue;
 
-			// check if obstacle is farther than than the object
-			auto AgentToObstacleDistance = Util::distance(agent->getTransform()->position, display_object->getTransform()->position);
+		for (auto display_object : getDisplayList()) {
 
-			if (AgentToObstacleDistance <= AgentToObjectDistance)
-			{
-				if (display_object->getType() == PLAYER || display_object->getType() == OBSTACLE)
+			if (display_object->getType() == OBSTACLE && (display_object->getType() == ZOMBIE || display_object->getType() == PIGMAN)) {
+				auto NodeToObstacleDistance = Util::distance(node->getTransform()->position, display_object->getTransform()->position);
+
+				if (NodeToObstacleDistance <= NodeToEnemyDistance)
 				{
 					contactList.push_back(display_object);
 				}
 			}
 		}
-		contactList.push_back(object); // add the target to the end of the list
-		const auto agentTarget = agent->getTransform()->position + agent->getCurrentDirection() * agent->getLOSDistance();
+		contactList.push_back(enemy); // add the target to the end of the list
+		const auto nodeTarget = node->getTransform()->position + node->getCurrentDirection() * node->getLOSDistance();
 
-		// New version...
-		hasLOS = CollisionManager::LOSCheck(agent, agentTarget, contactList, object);
-
-		agent->setHasLOS(hasLOS);
+		hasLOS = CollisionManager::LOSCheck(node, nodeTarget, contactList, enemy);
+		node->setHasEnemyLOS(hasLOS);
 	}
 	return hasLOS;
 }
@@ -669,7 +662,21 @@ void PlayScene::m_CheckPathNodeLOS()
 		auto targetDirection = m_pSteve->getTransform()->position - path_node->getTransform()->position;
 		auto normalizedDirection = Util::normalize(targetDirection);
 		path_node->setCurrentDirection(normalizedDirection);
-		m_CheckAgentLOS(path_node, m_pSteve);
+		m_CheckForLOS(path_node, m_pSteve);
+
+		path_node->setHasEnemyLOS(false);
+		for (auto zombie : m_pZombieArmy) {
+			if (m_CheckForEnemyLOS(path_node, zombie))
+				break;
+		}
+		
+		if (path_node->hasEnemyLOS())
+			continue;
+
+		for (auto pigman : m_pPigmanSquad) {
+			if (m_CheckForEnemyLOS(path_node, pigman))
+				break;
+		}
 	}
 }
 

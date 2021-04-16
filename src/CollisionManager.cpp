@@ -423,13 +423,34 @@ bool CollisionManager::LOSCheck(Agent* agent, glm::vec2 end_point, const std::ve
 				break;
 			default:
 				// non-sequitur
-				std::cout << "ERROR: " << agent->getType() << std::endl;
+				//std::cout << "ERROR: " << agent->getType() << std::endl;
 				break;
 			}
 			break;
+		case ZOMBIE:
+			switch (agent->getType())
+			{
+			case PATH_NODE:
+				if (lineRectEdgeCheck(start_point, rect_start, width, height))
+					return true;
+				break;
+			default:
+				//std::cout << "ERROR: " << agent->getType() << std::endl;
+				break;
+			}
+		case PIGMAN:
+			switch (agent->getType())
+			{
+			case PATH_NODE:
+				if (lineRectEdgeCheck(start_point, rect_start, width, height))
+					return true;
+				break;
+			default:
+				break;
+			}
 		default:
 			// non-sequitur
-			std::cout << "ERROR: " << object->getType() << std::endl;
+			//std::cout << "ERROR: " << object->getType() << std::endl;
 			break;
 		}
 	}
