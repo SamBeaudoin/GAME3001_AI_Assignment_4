@@ -51,7 +51,6 @@ void PlayScene::update()
 			(m_pZombieArmy[i]->getType() == ZOMBIE && static_cast<Zombie*>(m_pZombieArmy[i])->getState() != ZOMBIE_DAMAGED) &&
 			m_pSteve->hasLOS() && static_cast<Zombie*>(m_pZombieArmy[i])->getState() != ZOMBIE_DEATH)
 		{
-
 			m_pZombieArmy[i]->takeDamage();
 
 			if (m_pZombieArmy[i]->getHealth() <= 0) {
@@ -87,8 +86,8 @@ void PlayScene::update()
 		//range for checking if Steve is within range of Pigman When attacking
 		m_CheckForLOS(m_pSteve, m_pPigmanSquad[i]);
 		if (m_pSteve->getState() == STEVE_ATTACK &&
-			(m_pPigmanSquad[i]->getType() == ZOMBIE && static_cast<Zombie*>(m_pPigmanSquad[i])->getState() != ZOMBIE_DAMAGED) &&
-			m_pSteve->hasLOS() && static_cast<Zombie*>(m_pPigmanSquad[i])->getState() != ZOMBIE_DEATH)
+			(m_pPigmanSquad[i]->getType() == PIGMAN && static_cast<Pigman*>(m_pPigmanSquad[i])->getState() != PIGMAN_DAMAGED) &&
+			m_pSteve->hasLOS() && static_cast<Pigman*>(m_pPigmanSquad[i])->getState() != PIGMAN_DEATH)
 		{
 
 			m_pPigmanSquad[i]->takeDamage();
@@ -106,12 +105,12 @@ void PlayScene::update()
 		}
 
 		//remove pigman when their despawn timer is up
-		if (static_cast<Pigman*>(m_pPigmanSquad[i])->getDespawnTimer() == 0 && static_cast<Pigman*>(m_pPigmanSquad[i])->getState() == ZOMBIE_DEATH) {
+		if (static_cast<Pigman*>(m_pPigmanSquad[i])->getDespawnTimer() == 0 && static_cast<Pigman*>(m_pPigmanSquad[i])->getState() == PIGMAN_DEATH) {
 			removeChild(m_pPigmanSquad[i]);
 			m_pPigmanSquad[i] = nullptr;
 			m_pPigmanSquad.erase(m_pPigmanSquad.begin() + i);
 			m_pPigmanSquad.shrink_to_fit();
-			m_pPigmanCount->setText("Pigman Count: " + std::to_string(m_pPigmanSquad.size()));
+			//m_pPigmanCount->setText("Pigman Count: " + std::to_string(m_pPigmanSquad.size()));
 			break;
 		}
 	}
@@ -129,6 +128,35 @@ void PlayScene::update()
 				m_pArrowQuiver.shrink_to_fit();
 				break;
 			}
+	}
+
+	for (int i = 0; i < m_pArrowQuiver.size(); i++)
+	{
+		for (int j = 0; j < m_pZombieArmy.size(); j++)
+		{
+			//Did arrow hit a zombie?
+			if (CollisionManager::AABBCheck(m_pArrowQuiver[i], m_pZombieArmy[j]))
+			{
+				removeChild(m_pArrowQuiver[i]);
+				m_pArrowQuiver[i] = nullptr;
+				m_pArrowQuiver.erase(m_pArrowQuiver.begin() + i);
+				m_pArrowQuiver.shrink_to_fit();
+
+				m_pZombieArmy[j]->takeDamage();
+
+				if (m_pZombieArmy[j]->getHealth() <= 0) {
+					SoundManager::Instance().playSound("zombieDeath");
+					static_cast<Zombie*>(m_pZombieArmy[j])->StartDespawnTimer();
+					static_cast<Zombie*>(m_pZombieArmy[j])->setState(ZOMBIE_DEATH);
+				}
+				else {
+					SoundManager::Instance().playSound("zombieHurt" + std::to_string(rand() % 2));
+					static_cast<Zombie*>(m_pZombieArmy[j])->resetCooldown();
+					static_cast<Zombie*>(m_pZombieArmy[j])->setState(ZOMBIE_DAMAGED);
+				}
+				break;
+			}
+		}
 	}
 
 	for (int i = 0; i < m_pArrowQuiver.size(); i++)
@@ -159,7 +187,6 @@ void PlayScene::update()
 			}
 		}
 	}
-
 }
 
 void PlayScene::updateCollisions()
@@ -443,6 +470,25 @@ void PlayScene::start()
 	zomb->setDestinationNode(m_pMapNodes[5]);
 	zomb->AddNode(m_pMapNodes[2]);
 	m_pZombieArmy.push_back(zomb);
+
+	// Pigman Path
+	Pigman* pig = new Pigman();
+	pig->getTransform()->position = m_pMapNodes[6]->getNodeMiddle();
+	pig->AddNode(m_pMapNodes[6]);
+	pig->AddNode(m_pMapNodes[3]);
+	pig->setDestinationNode(m_pMapNodes[3]);
+	pig->AddNode(m_pMapNodes[0]);
+	addChild(pig);
+	m_pPigmanSquad.push_back(pig);
+
+	pig = new Pigman();
+	pig->getTransform()->position = m_pMapNodes[8]->getNodeMiddle();
+	addChild(pig);
+	pig->AddNode(m_pMapNodes[8]);
+	pig->AddNode(m_pMapNodes[5]);
+	pig->setDestinationNode(m_pMapNodes[5]);
+	pig->AddNode(m_pMapNodes[2]);
+	m_pPigmanSquad.push_back(pig);
 
 	//Labels
 	m_pHealth = new Label("Current HP: ", "Minecraft", 30);
