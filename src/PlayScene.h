@@ -48,6 +48,7 @@ private:
 	std::vector<Obstacle*> m_pObstacles;
 	std::vector<MapNodes*> m_pMapNodes;
 	std::vector<Arrow*> m_pArrowQuiver;
+	std::vector<DisplayObject*> m_pLOSDisplayObjects;
 	void m_CheckForLOS(Agent* first_object, DisplayObject* target_object);
 
 	Label* m_pHealth;
@@ -61,7 +62,7 @@ private:
 
 	std::vector<PathNode*> m_pGrid;
 	void m_buildGrid();
-	bool m_CheckAgentLOS(Agent* agent, DisplayObject* object);
+	bool m_CheckForEnemyLOS(PathNode* node, Enemy* enemy);
 
 	void m_CheckPathNodeLOS();
 

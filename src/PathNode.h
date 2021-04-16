@@ -13,7 +13,11 @@ public:
 	void draw() override;
 	void update() override;
 	void clean() override;
+
+	void setHasEnemyLOS(bool state);
+	bool hasEnemyLOS();
 private:
+	bool m_enemyLOS;
 };
 
 #endif /* defined (__PATH_NODE__) */

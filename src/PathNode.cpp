@@ -34,3 +34,21 @@ void PathNode::update()
 void PathNode::clean()
 {
 }
+
+void PathNode::setHasEnemyLOS(bool state)
+{
+	m_enemyLOS = state;
+	if (hasLOS()) {
+		if (state)
+			setLOSColour(glm::vec4(0, 1, 0, 1));
+		else
+			setLOSColour(glm::vec4(1, 1, 0, 1));
+	}
+	else
+		setLOSColour(glm::vec4(1, 0, 0, 1));
+}
+
+bool PathNode::hasEnemyLOS()
+{
+	return m_enemyLOS;
+}
