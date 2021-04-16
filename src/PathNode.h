@@ -16,8 +16,11 @@ public:
 
 	void setHasEnemyLOS(bool state);
 	bool hasEnemyLOS();
+	glm::vec2 getNodeMiddle();
+	void setNodeMiddle(glm::vec2 location);
 private:
 	bool m_enemyLOS;
+	glm::vec2 m_middleOfNode;
 };
 
 #endif /* defined (__PATH_NODE__) */

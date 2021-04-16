@@ -189,6 +189,14 @@ void PlayScene::update()
 			}
 		}
 	}
+
+	for (auto enemy : m_pGangOfEnemies)
+	{
+		if (Util::distance(m_pSteve->getTransform()->position, enemy->getTransform()->position) < enemy->getLOSDistance() && !enemy->hasLOS())
+		{
+			m_findClosestPathNodeWithLOS(enemy);
+		}
+	}
 }
 
 void PlayScene::updateCollisions()
@@ -403,7 +411,7 @@ void PlayScene::start()
 	m_pBackground = new Background();
 	addChild(m_pBackground);
 
-	m_buildGrid();
+	
 
 	//load sounds used
 	loadSounds();
@@ -443,6 +451,9 @@ void PlayScene::start()
 		m_pLOSDisplayObjects.push_back(obstacle);
 	}
 
+	// Build Grid
+	m_buildGrid();
+
 	//nodes for navigation
 	m_pMapNodes.push_back(new MapNodes(glm::vec2(55.0f,50.0f)));
 	m_pMapNodes.push_back(new MapNodes(glm::vec2(55.0f,250.0f)));
@@ -466,6 +477,7 @@ void PlayScene::start()
 	zomb->AddNode(m_pMapNodes[0]);
 	addChild(zomb);
 	m_pZombieArmy.push_back(zomb);
+	m_pGangOfEnemies.push_back(zomb);
 
 	zomb = new Zombie();
 	zomb->getTransform()->position = m_pMapNodes[8]->getNodeMiddle();
@@ -475,25 +487,28 @@ void PlayScene::start()
 	zomb->setDestinationNode(m_pMapNodes[5]);
 	zomb->AddNode(m_pMapNodes[2]);
 	m_pZombieArmy.push_back(zomb);
+	m_pGangOfEnemies.push_back(zomb);
 
 	// Pigman Path
 	Pigman* pig = new Pigman();
-	pig->getTransform()->position = m_pMapNodes[6]->getNodeMiddle();
-	pig->AddNode(m_pMapNodes[6]);
+	pig->getTransform()->position = m_pMapNodes[3]->getNodeMiddle();
 	pig->AddNode(m_pMapNodes[3]);
-	pig->setDestinationNode(m_pMapNodes[3]);
 	pig->AddNode(m_pMapNodes[0]);
+	pig->setDestinationNode(m_pMapNodes[0]);
+	pig->AddNode(m_pMapNodes[6]);
 	addChild(pig);
 	m_pPigmanSquad.push_back(pig);
+	m_pGangOfEnemies.push_back(pig);
 
 	pig = new Pigman();
-	pig->getTransform()->position = m_pMapNodes[8]->getNodeMiddle();
+	pig->getTransform()->position = m_pMapNodes[5]->getNodeMiddle();
 	addChild(pig);
-	pig->AddNode(m_pMapNodes[8]);
 	pig->AddNode(m_pMapNodes[5]);
-	pig->setDestinationNode(m_pMapNodes[5]);
 	pig->AddNode(m_pMapNodes[2]);
+	pig->setDestinationNode(m_pMapNodes[2]);
+	pig->AddNode(m_pMapNodes[8]);
 	m_pPigmanSquad.push_back(pig);
+	m_pGangOfEnemies.push_back(pig);
 
 	//Labels
 	m_pHealth = new Label("Current HP: ", "Minecraft", 30);
@@ -583,10 +598,10 @@ void PlayScene::m_CheckForLOS(Agent* first_object, DisplayObject* target_object)
 		contactList.push_back(target_object); // add the target to the end of the list
 		bool hasLOS;
 		const auto agentTarget = first_object->getTransform()->position + first_object->getCurrentDirection() * first_object->getLOSDistance();
-		//if (first_object->getType() == PLAYER)
+		if (first_object->getType() == PLAYER)
 			hasLOS = CollisionManager::LOSCheck(first_object, agentTarget, contactList, target_object);
-		//else
-			//hasLOS = CollisionManager::LOSCheck(first_object, target_object->getTransform()->position, contactList, target_object);
+		else
+			hasLOS = CollisionManager::LOSCheck(first_object, target_object->getTransform()->position, contactList, target_object);
 
 		first_object->setHasLOS(hasLOS);
 	}
@@ -622,6 +637,8 @@ void PlayScene::m_buildGrid()
 			PathNode* path_node = new PathNode();
 			path_node->getTransform()->position = glm::vec2(
 				(col * tileSize) + tileSize * 0.5f, (row * tileSize) + tileSize * 0.5f);
+
+			path_node->setNodeMiddle(path_node->getTransform()->position);
 
 			bool isColliding = false;
 
@@ -707,29 +724,23 @@ void PlayScene::m_toggleGrid(bool state)
 	}
 }
 
-PathNode* PlayScene::m_findClosestPathNode(Agent* agent)
+void PlayScene::m_findClosestPathNodeWithLOS(Agent* agent)
 {
-	auto min = INFINITY;
+	auto min = agent->getLOSDistance();
 	PathNode* closestPathNode = nullptr;
 
-	// Alex's extra...
-	std::vector<PathNode*> m_pNoLOSNodes;
 	for (auto path_node : m_pGrid)
 	{
-		if (path_node->hasLOS() == false)
+		if (path_node->hasLOS() && path_node->hasEnemyLOS())
 		{
-			m_pNoLOSNodes.push_back(path_node);
+			const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
+			if (distance < min)
+			{
+				min = distance;
+				closestPathNode = path_node;
+			}
 		}
 	}
-
-	for (auto path_node : m_pNoLOSNodes) // Change to m_pGrid for Tom's
-	{
-		const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
-		if (distance < min)
-		{
-			min = distance;
-			closestPathNode = path_node;
-		}
-	}
-	return closestPathNode;
+	if (closestPathNode != nullptr)
+		agent->setDestinationNode(closestPathNode->getNodeMiddle());
 }

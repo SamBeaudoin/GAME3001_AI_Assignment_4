@@ -7,12 +7,14 @@ PathNode::PathNode()
 {
 	setWidth(10);
 	setHeight(10);
-	getTransform()->position = glm::vec2(0.0f, 0.0f);
+	//getTransform()->position = glm::vec2(0.0f, 0.0f);
 	getRigidBody()->isColliding = false;
 	setType(PATH_NODE);
 
 	setCurrentHeading(0.0f);// current facing angle
 	setCurrentDirection(glm::vec2(1.0f, 0.0f)); // facing right
+
+	m_middleOfNode = glm::vec2(getTransform()->position.x, getTransform()->position.y);
 
 	setLOSDistance(1000.0f);
 	setLOSColour(glm::vec4(1, 0, 0, 1));
@@ -51,4 +53,14 @@ void PathNode::setHasEnemyLOS(bool state)
 bool PathNode::hasEnemyLOS()
 {
 	return m_enemyLOS;
+}
+
+glm::vec2 PathNode::getNodeMiddle()
+{
+	return m_middleOfNode;
+}
+
+void PathNode::setNodeMiddle(glm::vec2 location)
+{
+	m_middleOfNode = location;
 }

@@ -49,6 +49,7 @@ private:
 	std::vector<MapNodes*> m_pMapNodes;
 	std::vector<Arrow*> m_pArrowQuiver;
 	std::vector<DisplayObject*> m_pLOSDisplayObjects;
+	std::vector<Enemy*> m_pGangOfEnemies;
 	void m_CheckForLOS(Agent* first_object, DisplayObject* target_object);
 
 	Label* m_pHealth;
@@ -69,7 +70,6 @@ private:
 	bool m_gridVisible;
 	void m_toggleGrid(bool state);
 
-	// lab 10
-	PathNode* m_findClosestPathNode(Agent* agent);
+	void m_findClosestPathNodeWithLOS(Agent* agent);
 };
 #endif /* defined (__PLAY_SCENE__) */

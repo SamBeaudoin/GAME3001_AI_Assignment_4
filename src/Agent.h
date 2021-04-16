@@ -22,6 +22,7 @@ public:
 
 	// getters
 	glm::vec2 getTargetPosition() const;
+	glm::vec2 getDestination() const;
 	glm::vec2 getCurrentDirection() const;
 	float getLOSDistance() const;
 	bool hasLOS() const;
@@ -50,6 +51,9 @@ public:
 	void setLOSColour(glm::vec4 colour);
 	void setDebugMode(bool mode);
 	void setDestinationNode(MapNodes* destination);
+
+	void setDestinationNode(glm::vec2 destination);
+
 	void setDistanceWalked(float distance);
 	void AddNode(MapNodes* node);
 	MapNodes* NextNode();
@@ -86,6 +90,8 @@ private:
 
 	// Hide Cooldown Check
 	bool m_isHideCooldownRunning;
+
+	glm::vec2 m_destination;
 
 	//other
 	MapNodes* m_destinationNode;

@@ -17,6 +17,11 @@ glm::vec2 Agent::getTargetPosition() const
 	return m_targetPosition;
 }
 
+glm::vec2 Agent::getDestination() const
+{
+	return m_destination;
+}
+
 glm::vec2 Agent::getCurrentDirection() const
 {
 	return m_currentDirection;
@@ -142,6 +147,11 @@ void Agent::setDebugMode(bool mode)
 void Agent::setDestinationNode(MapNodes* destination)
 {
 	m_destinationNode = destination;
+}
+
+void Agent::setDestinationNode(glm::vec2 destination)
+{
+	m_destination = destination;
 }
 
 void Agent::setDistanceWalked(float distance)

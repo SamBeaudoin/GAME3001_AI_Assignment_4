@@ -3,6 +3,7 @@
 #include "Util.h"
 #include <iostream>
 #include "Zombie.h"
+#include "Pigman.h"
 
 MoveToLOSAction::MoveToLOSAction()
 {
@@ -14,15 +15,8 @@ MoveToLOSAction::~MoveToLOSAction()
 
 void MoveToLOSAction::Action()
 {
-	//TEMPORARY - WILL BE MODIFIED LATER
-
-	auto destination = getAgent()->getDestinationNode()->getNodeMiddle();
+	auto destination = getAgent()->getDestination();
 	auto currentRotation = getAgent()->getCurrentHeading();
-
-	//change new destination if already reached
-	if (Util::distance(getAgent()->getTransform()->position, destination) < 20.0f) {
-		getAgent()->setDestinationNode(getAgent()->NextNode());
-	}
 
 	//determine an orientation and angle
 	auto direction = Util::normalize(destination - getAgent()->getTransform()->position);
@@ -39,7 +33,8 @@ void MoveToLOSAction::Action()
 	}
 
 	//move if the agent, if they are of type Zombie (so far all of them are)
-	if (getAgent()->getType() == ZOMBIE && static_cast<Zombie*>(getAgent())->getState() != ZOMBIE_DEATH) {
+	if ((getAgent()->getType() == ZOMBIE && static_cast<Zombie*>(getAgent())->getState() != ZOMBIE_DEATH) || 
+		(getAgent()->getType() == PIGMAN && static_cast<Pigman*>(getAgent())->getState() != PIGMAN_DEATH)) {
 		getAgent()->getRigidBody()->velocity = direction * 2.0f;
 		getAgent()->setDistanceWalked(getAgent()->getDistanceWalked() + 2.0f);
 		getAgent()->getTransform()->position += getAgent()->getRigidBody()->velocity;
