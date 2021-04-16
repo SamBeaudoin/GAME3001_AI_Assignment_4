@@ -189,13 +189,6 @@ void PlayScene::update()
 			}
 		}
 	}
-
-	for (auto piggies : m_pPigmanSquad)
-	{
-		piggies->setIsHideCooldownRunning(false);
-		piggies->setHasLOS(true);
-		piggies->setIsWithinRange(true);
-	}
 }
 
 void PlayScene::updateCollisions()
@@ -423,21 +416,21 @@ void PlayScene::start()
 	m_pLOSDisplayObjects.push_back(m_pSteve);
 
 	//Obstacles
-	m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, -50.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(150.0f, -50.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(350.0f, -50.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(550.0f, -50.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(750.0f, -50.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, -50.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(150.0f, -50.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(350.0f, -50.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(550.0f, -50.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(750.0f, -50.0f)));
 	m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, 150.0f)));
 	m_pObstacles.push_back(new Tree(glm::vec2(850.0f, 150.0f)));
 	m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, 350.0f)));
 	m_pObstacles.push_back(new Tree(glm::vec2(850.0f, 350.0f)));
 	m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, 550.0f)));
 	m_pObstacles.push_back(new Tree(glm::vec2(850.0f, 550.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(150.0f, 650.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(350.0f, 650.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(550.0f, 650.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(750.0f, 650.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(150.0f, 650.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(350.0f, 650.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(550.0f, 650.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(750.0f, 650.0f)));
 
 	//Obstacles in the middle of the map
 	m_pObstacles.push_back(new Tree(glm::vec2(225.0f, 225.0f)));
@@ -629,8 +622,24 @@ void PlayScene::m_buildGrid()
 			PathNode* path_node = new PathNode();
 			path_node->getTransform()->position = glm::vec2(
 				(col * tileSize) + tileSize * 0.5f, (row * tileSize) + tileSize * 0.5f);
-			addChild(path_node);
-			m_pGrid.push_back(path_node);
+
+			bool isColliding = false;
+
+			for (auto obstacle : m_pObstacles)
+			{
+				if (CollisionManager::AABBCheck(path_node, obstacle))
+				{
+					delete path_node;
+					path_node = nullptr;
+					isColliding = true;
+					break;
+				}
+			}
+			if (!isColliding)
+			{
+				addChild(path_node);
+				m_pGrid.push_back(path_node);
+			}
 		}
 	}
 }
