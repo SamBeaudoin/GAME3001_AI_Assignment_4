@@ -137,7 +137,7 @@ void Zombie::m_buildAnimations()
 	Animation damage = Animation();
 	damage.name = "damage";
 
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 2; i++)
 		damage.frames.push_back(getSpriteSheet()->getFrame("zombie_damage" + std::to_string(i)));
 	setAnimation(damage);
 
