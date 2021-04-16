@@ -187,6 +187,7 @@
     <ClCompile Include="..\src\Pigman.cpp" />
     <ClCompile Include="..\src\RadiusCondition.cpp" />
     <ClCompile Include="..\src\RangedAttackAction.cpp" />
+    <ClCompile Include="..\src\RangedCombatDecisionTree.cpp" />
     <ClCompile Include="..\src\SpaceShip.cpp" />
     <ClCompile Include="..\src\Sprite.cpp" />
     <ClCompile Include="..\src\Steve.cpp" />
@@ -262,6 +263,7 @@
     <ClInclude Include="..\src\PigmanState.h" />
     <ClInclude Include="..\src\RadiusCondition.h" />
     <ClInclude Include="..\src\RangedAttackAction.h" />
+    <ClInclude Include="..\src\RangedCombatDecisionTree.h" />
     <ClInclude Include="..\src\SoundType.h" />
     <ClInclude Include="..\src\SpaceShip.h" />
     <ClInclude Include="..\src\Sprite.h" />

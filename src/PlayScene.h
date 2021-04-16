@@ -72,7 +72,4 @@ private:
 	// lab 10
 	PathNode* m_findClosestPathNode(Agent* agent);
 };
-
-
-
 #endif /* defined (__PLAY_SCENE__) */

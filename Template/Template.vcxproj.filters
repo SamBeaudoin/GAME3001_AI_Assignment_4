@@ -237,6 +237,9 @@
     <ClCompile Include="..\src\HideCooldownCondition.cpp">
       <Filter>Decision\Conditions</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\RangedCombatDecisionTree.cpp">
+      <Filter>Decision\Core Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
@@ -496,6 +499,9 @@
     </ClInclude>
     <ClInclude Include="..\src\HideCooldownCondition.h">
       <Filter>Decision\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\RangedCombatDecisionTree.h">
+      <Filter>Decision\Core Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

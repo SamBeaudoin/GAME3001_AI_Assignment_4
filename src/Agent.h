@@ -33,6 +33,8 @@ public:
 	bool getDebugMode() const;
 	float getDistanceWalked() const;
 	bool getIsWithinHealthThreshold() const;
+	bool getIsWithinRange() const;
+	bool getIsHideCooldownRunning() const;
 
 	MapNodes* getDestinationNode() const;
 	std::vector<MapNodes*> getNodes() const;
@@ -52,6 +54,8 @@ public:
 	void AddNode(MapNodes* node);
 	MapNodes* NextNode();
 	void setIsWithinHealthThreshold(bool state);
+	void setIsWithinRange(bool state);
+	void setIsHideCooldownRunning(bool state);
 
 	//Decision Tree
 	//void MakeDecision();
@@ -76,6 +80,12 @@ private:
 
 	// Health Check
 	bool m_isWithinHealthRange;
+
+	// Range Check
+	bool m_isWithinRange;
+
+	// Hide Cooldown Check
+	bool m_isHideCooldownRunning;
 
 	//other
 	MapNodes* m_destinationNode;

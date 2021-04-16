@@ -72,6 +72,16 @@ bool Agent::getIsWithinHealthThreshold() const
 	return m_isWithinHealthRange;
 }
 
+bool Agent::getIsWithinRange() const
+{
+	return m_isWithinRange;
+}
+
+bool Agent::getIsHideCooldownRunning() const
+{
+	return m_isHideCooldownRunning;
+}
+
 MapNodes* Agent::getDestinationNode() const
 {
 	return m_destinationNode;
@@ -155,6 +165,16 @@ MapNodes* Agent::NextNode()
 void Agent::setIsWithinHealthThreshold(bool state)
 {
 	m_isWithinHealthRange = state;
+}
+
+void Agent::setIsWithinRange(bool state)
+{
+	m_isWithinRange = state;
+}
+
+void Agent::setIsHideCooldownRunning(bool state)
+{
+	m_isHideCooldownRunning = state;
 }
 
 //void Agent::MakeDecision()
