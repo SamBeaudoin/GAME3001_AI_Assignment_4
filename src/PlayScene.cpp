@@ -103,10 +103,11 @@ void PlayScene::update()
 			else {
 				SoundManager::Instance().playSound("pigmanHurt" + std::to_string(rand() % 2));
 				static_cast<Pigman*>(m_pPigmanSquad[i])->resetCooldown();
+				static_cast<Pigman*>(m_pPigmanSquad[i])->startHideCooldown();
 				static_cast<Pigman*>(m_pPigmanSquad[i])->setState(PIGMAN_DAMAGED);
 			}
 		}
-		
+
 		//remove pigman when their despawn timer is up
 		if (static_cast<Pigman*>(m_pPigmanSquad[i])->getDespawnTimer() == 0 && static_cast<Pigman*>(m_pPigmanSquad[i])->getState() == PIGMAN_DEATH) {
 			removeChild(m_pPigmanSquad[i]);
@@ -224,8 +225,7 @@ void PlayScene::update()
 
 				m_pPigmanSquad[j]->takeDamage();
 
-				m_pPigmanSquad[j]->setIsHideCooldownRunning(true);
-				m_pPigmanSquad[j]->setHideCooldown(1200);				// TODO: to be changed later
+				m_pPigmanSquad[j]->setIsHideCooldownRunning(true);				// TODO: to be changed later
 
 				if (m_pPigmanSquad[j]->getHealth() <= 0) {
 					SoundManager::Instance().playSound("pigmanDeath");
@@ -252,7 +252,7 @@ void PlayScene::update()
 			else
 				m_findClosestPathNodeWithLOS(enemy);
 		}
-		
+
 		if (Util::distance(m_pSteve->getTransform()->position, enemy->getTransform()->position) < enemy->getAttackRange() && enemy->hasLOS()) {
 			enemy->setIsWithinAttackRange(true);
 		}
@@ -261,11 +261,11 @@ void PlayScene::update()
 		}
 	}
 
-<<<<<<< HEAD
 	for (auto pigman : m_pPigmanSquad) {
 		if (pigman->getIsHideCooldownRunning())
 			m_findClosestPathNodeWithoutLOS(pigman);
-=======
+	}
+
 	// enemy off screen deletion
 	for (int i = 0; i < m_pZombieArmy.size(); i++)
 	{
@@ -338,7 +338,6 @@ void PlayScene::update()
 			m_pGangOfEnemies.push_back(pig);
 			m_enemyNeedsSpawn = false;
 		}
->>>>>>> 21eefb24dd2236214ec65afceaa5e65d3693bbbd
 	}
 }
 
@@ -583,11 +582,7 @@ void PlayScene::start()
 	//Obstacles in the middle of the map
 	//m_pObstacles.push_back(new Tree(glm::vec2(225.0f, 225.0f)));
 	m_pObstacles.push_back(new Tree(glm::vec2(225.0f, 375.0f)));
-<<<<<<< HEAD
-	m_pObstacles.push_back(new Tree(glm::vec2(535.0f, 265.0f)));
-=======
 	m_pObstacles.push_back(new Tree(glm::vec2(545.0f, 300.0f)));
->>>>>>> 21eefb24dd2236214ec65afceaa5e65d3693bbbd
 	m_pObstacles.push_back(new Tree(glm::vec2(585.0f, 335.0f)));
 	
 	for (auto obstacle : m_pObstacles) {
@@ -730,11 +725,7 @@ void PlayScene::m_CheckForLOS(Agent* first_object, DisplayObject* target_object)
 		std::vector<DisplayObject*> contactList;
 		for (auto object : getDisplayList())
 		{
-<<<<<<< HEAD
 			if ((object->getType() == PLAYER || object->getType() == OBSTACLE) && first_object != object) {
-=======
-			//if (object->getType() == OBSTACLE && object->getType() != target_object->getType()) {
->>>>>>> 21eefb24dd2236214ec65afceaa5e65d3693bbbd
 
 				// check if obstacle is farther than than the object
 				auto AgentToObstacleDistance = Util::distance(first_object->getTransform()->position, object->getTransform()->position);
@@ -744,11 +735,8 @@ void PlayScene::m_CheckForLOS(Agent* first_object, DisplayObject* target_object)
 					contactList.push_back(object);
 				}
 			}
-<<<<<<< HEAD
 		}
-=======
-		//}
->>>>>>> 21eefb24dd2236214ec65afceaa5e65d3693bbbd
+
 		contactList.push_back(target_object); // add the target to the end of the list
 		bool hasLOS;
 
@@ -890,28 +878,6 @@ void PlayScene::m_findClosestPathNodeWithLOS(Agent* agent)
 	}
 	if (closestPathNode != nullptr)
 		agent->setDestinationNode(closestPathNode->getNodeMiddle());
-}
-
-void PlayScene::m_findClosestPathNodeWithoutLOS(Agent* agent)
-{
-	auto min = agent->getLOSDistance();
-	PathNode* closestPathNode = nullptr;
-
-	for (auto path_node : m_pGrid)
-	{
-		if (!path_node->hasLOS() && !path_node->hasEnemyLOS())
-		{
-			const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
-			if (distance < min)
-			{
-				min = distance;
-				closestPathNode = path_node;
-			}
-		}
-	}
-	if (closestPathNode != nullptr)
-		agent->setDestinationNode(closestPathNode->getNodeMiddle());
-
 }
 
 void PlayScene::m_findClosestPathNodeWithoutLOS(Agent* agent)

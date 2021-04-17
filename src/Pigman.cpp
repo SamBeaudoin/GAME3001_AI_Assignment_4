@@ -121,7 +121,6 @@ void Pigman::setState(PigmanState state)
 	m_state = state;
 }
 
-<<<<<<< HEAD
 void Pigman::startHideCooldown()
 {
 	m_hideCooldown = 120;
@@ -130,11 +129,6 @@ void Pigman::startHideCooldown()
 void Pigman::UpdateHideCooldown()
 {
 	m_hideCooldown--;
-=======
-void Pigman::setHideCooldown(int x)
-{
-	m_hideCooldown = x;
->>>>>>> 21eefb24dd2236214ec65afceaa5e65d3693bbbd
 }
 
 void Pigman::resetCooldown()

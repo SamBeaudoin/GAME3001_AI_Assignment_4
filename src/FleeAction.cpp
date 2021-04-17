@@ -15,21 +15,7 @@ FleeAction::~FleeAction()
 
 void FleeAction::Action()
 {
-	glm::vec2 destination;
-	// In the bottom half
-	if (getAgent()->getTransform()->position.y > 300)
-	{
-		destination = glm::vec2(getAgent()->getTransform()->position.x, 700);
-	}
-	else
-	{
-		destination = glm::vec2(getAgent()->getTransform()->position.x, -100);
-	}
-
-<<<<<<< HEAD
 	auto destination = getAgent()->getTransform()->position;
-=======
->>>>>>> 21eefb24dd2236214ec65afceaa5e65d3693bbbd
 	auto currentRotation = getAgent()->getCurrentHeading();
 
 	if (destination.y >= 300)

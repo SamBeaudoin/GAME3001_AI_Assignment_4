@@ -74,10 +74,6 @@ private:
 	bool m_gridVisible;
 
 	void m_findClosestPathNodeWithLOS(Agent* agent);
-<<<<<<< HEAD
-=======
-
->>>>>>> 21eefb24dd2236214ec65afceaa5e65d3693bbbd
 	void m_findClosestPathNodeWithoutLOS(Agent* agent);
 };
 #endif /* defined (__PLAY_SCENE__) */
