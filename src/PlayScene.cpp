@@ -493,8 +493,8 @@ void PlayScene::start()
 	//Obstacles in the middle of the map
 	//m_pObstacles.push_back(new Tree(glm::vec2(225.0f, 225.0f)));
 	m_pObstacles.push_back(new Tree(glm::vec2(225.0f, 375.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(525.0f, 275.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(575.0f, 325.0f)));
+	m_pObstacles.push_back(new Tree(glm::vec2(545.0f, 300.0f)));
+	m_pObstacles.push_back(new Tree(glm::vec2(585.0f, 335.0f)));
 	
 	for (auto obstacle : m_pObstacles) {
 		addChild(obstacle);
@@ -642,7 +642,7 @@ void PlayScene::m_CheckForLOS(Agent* first_object, DisplayObject* target_object)
 		std::vector<DisplayObject*> contactList;
 		for (auto object : m_pObstacles)
 		{
-			//if ((object->getType() == PLAYER || object->getType() == OBSTACLE) && object->getType() != target_object->getType()) {
+			//if (object->getType() == OBSTACLE && object->getType() != target_object->getType()) {
 
 				// check if obstacle is farther than than the object
 				auto AgentToObstacleDistance = Util::distance(first_object->getTransform()->position, object->getTransform()->position);
@@ -651,8 +651,8 @@ void PlayScene::m_CheckForLOS(Agent* first_object, DisplayObject* target_object)
 				{
 					contactList.push_back(object);
 				}
-			//}
-		}
+			}
+		//}
 		contactList.push_back(target_object); // add the target to the end of the list
 		bool hasLOS;
 
@@ -769,6 +769,8 @@ void PlayScene::m_CheckPathNodeLOS()
 		for (auto pigman : m_pPigmanSquad) {
 			if (m_CheckForEnemyLOS(path_node, pigman))
 				break;
+			else 
+				path_node->setHasEnemyLOS(false);
 		}
 	}
 }

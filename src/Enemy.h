@@ -31,7 +31,6 @@ private:
 	void m_checkBounds();
 	virtual void m_buildAnimations() = 0;
 
-
 	float m_maxSpeed;
 	float m_turnRate;
 	int m_health;

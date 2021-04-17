@@ -442,6 +442,10 @@ bool CollisionManager::LOSCheck(Agent* agent, glm::vec2 end_point, const std::ve
 				if (lineRectEdgeCheck(start_point, rect_start, width, height))
 					return true;
 				break;
+			case PLAYER:
+				if (lineRectCheck(start_point, end_point, rect_start, width, height))
+					return true;
+				break;
 			default:
 				//std::cout << "ERROR: " << agent->getType() << std::endl;
 				break;
@@ -455,6 +459,10 @@ bool CollisionManager::LOSCheck(Agent* agent, glm::vec2 end_point, const std::ve
 				break;
 			case PATH_NODE:
 				if (lineRectEdgeCheck(start_point, rect_start, width, height))
+					return true;
+				break;
+			case PLAYER:
+				if (lineRectCheck(start_point, end_point, rect_start, width, height))
 					return true;
 				break;
 			default:
