@@ -21,7 +21,7 @@ void RangedCombatDecisionTree::Update()
     m_LOSSearchNode->setLOS(m_pAgent->hasLOS());
     m_RadiusNode->setIsWithinRadius(m_pAgent->withinRadius());
     m_HealthNode->setIsWithinHealthRange(m_pAgent->getIsWithinHealthThreshold());
-    m_WithinRangeNode->setIsWithinRange(m_pAgent->getIsWithinRange());
+    m_WithinRangeNode->setIsWithinRange(m_pAgent->getIsWithinAttackRange());
     m_HideCooldownNode->setIsCooldownRunning(m_pAgent->getIsHideCooldownRunning());
     m_LOSFleeNode->setLOS(m_pAgent->hasLOS());
 }

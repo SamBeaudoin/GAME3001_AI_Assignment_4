@@ -34,7 +34,7 @@ public:
 	bool getDebugMode() const;
 	float getDistanceWalked() const;
 	bool getIsWithinHealthThreshold() const;
-	bool getIsWithinRange() const;
+	bool getIsWithinAttackRange() const;
 	bool getIsHideCooldownRunning() const;
 
 	MapNodes* getDestinationNode() const;
@@ -58,11 +58,8 @@ public:
 	void AddNode(MapNodes* node);
 	MapNodes* NextNode();
 	void setIsWithinHealthThreshold(bool state);
-	void setIsWithinRange(bool state);
+	void setIsWithinAttackRange(bool state);
 	void setIsHideCooldownRunning(bool state);
-
-	//Decision Tree
-	//void MakeDecision();
 
 private:
 	void m_changeDirection();
@@ -86,7 +83,7 @@ private:
 	bool m_isWithinHealthRange;
 
 	// Range Check
-	bool m_isWithinRange;
+	bool m_isWithinAttackRange;
 
 	// Hide Cooldown Check
 	bool m_isHideCooldownRunning;

@@ -1,8 +1,9 @@
 #include "FleeAction.h"
-#include "SoundManager.h"
 #include "Util.h"
 #include <iostream>
+#include "Enemy.h"
 #include "Zombie.h"
+#include "Pigman.h"
 
 FleeAction::FleeAction()
 {
@@ -16,38 +17,22 @@ void FleeAction::Action()
 {
 	//TEMPORARY - WILL BE MODIFIED LATER
 
-	auto destination = getAgent()->getDestinationNode()->getNodeMiddle();
+	auto destination = getAgent()->getTransform()->position;
 	auto currentRotation = getAgent()->getCurrentHeading();
 
-	//change new destination if already reached
-	if (Util::distance(getAgent()->getTransform()->position, destination) < 20.0f) {
-		getAgent()->setDestinationNode(getAgent()->NextNode());
+	if (destination.y >= 300)
+		destination.y = 700;
+	else
+		destination.y = -100;
+
+	static_cast<Enemy*>(getAgent())->move(destination, currentRotation);
+	
+	if (getAgent()->getType() == ZOMBIE) {
+		if (static_cast<Zombie*>(getAgent())->getState() != ZOMBIE_DAMAGED && static_cast<Zombie*>(getAgent())->getState() != ZOMBIE_DEATH)
+			static_cast<Zombie*>(getAgent())->setState(ZOMBIE_WALK);
 	}
-
-	//determine an orientation and angle
-	auto direction = Util::normalize(destination - getAgent()->getTransform()->position);
-	auto orientation = glm::vec2(cos(currentRotation * Util::Deg2Rad), sin(currentRotation * Util::Deg2Rad));
-
-	auto targetRotation = Util::signedAngle(orientation, direction);
-
-	//turn tha agent accordingly
-	if (abs(targetRotation) > 5.0f) {
-		if (targetRotation > 0)
-			getAgent()->setCurrentHeading(currentRotation + 5.0f);
-		else if (targetRotation < 0)
-			getAgent()->setCurrentHeading(currentRotation + 5.0f);
-	}
-
-	//move if the agent, if they are of type Zombie (so far all of them are)
-	if (getAgent()->getType() == ZOMBIE && static_cast<Zombie*>(getAgent())->getState() != ZOMBIE_DEATH) {
-		getAgent()->getRigidBody()->velocity = direction * 2.0f;
-		getAgent()->setDistanceWalked(getAgent()->getDistanceWalked() + 2.0f);
-		getAgent()->getTransform()->position += getAgent()->getRigidBody()->velocity;
-
-		//Sound
-		if (getAgent()->getDistanceWalked() >= 60) {
-			getAgent()->setDistanceWalked(getAgent()->getDistanceWalked() - 60);
-			SoundManager::Instance().playSound("grass" + std::to_string(rand() % 6));
-		}
+	else {
+		if (static_cast<Pigman*>(getAgent())->getState() != PIGMAN_DAMAGED && static_cast<Pigman*>(getAgent())->getState() != PIGMAN_DEATH)
+			static_cast<Pigman*>(getAgent())->setState(PIGMAN_WALK);
 	}
 }

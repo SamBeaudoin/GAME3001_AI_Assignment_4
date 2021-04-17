@@ -77,9 +77,9 @@ bool Agent::getIsWithinHealthThreshold() const
 	return m_isWithinHealthRange;
 }
 
-bool Agent::getIsWithinRange() const
+bool Agent::getIsWithinAttackRange() const
 {
-	return m_isWithinRange;
+	return m_isWithinAttackRange;
 }
 
 bool Agent::getIsHideCooldownRunning() const
@@ -147,6 +147,7 @@ void Agent::setDebugMode(bool mode)
 void Agent::setDestinationNode(MapNodes* destination)
 {
 	m_destinationNode = destination;
+	m_destination = destination->getTransform()->position;
 }
 
 void Agent::setDestinationNode(glm::vec2 destination)
@@ -177,9 +178,9 @@ void Agent::setIsWithinHealthThreshold(bool state)
 	m_isWithinHealthRange = state;
 }
 
-void Agent::setIsWithinRange(bool state)
+void Agent::setIsWithinAttackRange(bool state)
 {
-	m_isWithinRange = state;
+	m_isWithinAttackRange = state;
 }
 
 void Agent::setIsHideCooldownRunning(bool state)

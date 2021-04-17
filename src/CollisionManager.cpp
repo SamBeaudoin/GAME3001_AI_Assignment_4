@@ -395,7 +395,9 @@ bool CollisionManager::LOSCheck(glm::vec2 start_point, glm::vec2 end_point, cons
 
 bool CollisionManager::LOSCheck(Agent* agent, glm::vec2 end_point, const std::vector<DisplayObject*>& objects, DisplayObject* target)
 {
-	const auto start_point = agent->getTransform()->position;
+	auto start_point = agent->getTransform()->position;
+	if (agent->getType() == PLAYER)
+		start_point = start_point + glm::vec2(20.0f, 20.0f);
 
 	for (auto object : objects)
 	{
@@ -442,10 +444,15 @@ bool CollisionManager::LOSCheck(Agent* agent, glm::vec2 end_point, const std::ve
 				if (lineRectEdgeCheck(start_point, rect_start, width, height))
 					return true;
 				break;
+			case PLAYER:
+				if (lineRectCheck(start_point, end_point, rect_start, width, height))
+					return true;
+				break;
 			default:
 				//std::cout << "ERROR: " << agent->getType() << std::endl;
 				break;
 			}
+			break;
 		case PIGMAN:
 			switch (agent->getType())
 			{
@@ -457,9 +464,14 @@ bool CollisionManager::LOSCheck(Agent* agent, glm::vec2 end_point, const std::ve
 				if (lineRectEdgeCheck(start_point, rect_start, width, height))
 					return true;
 				break;
+			case PLAYER:
+				if (lineRectCheck(start_point, end_point, rect_start, width, height))
+					return true;
+				break;
 			default:
 				break;
 			}
+			break;
 		default:
 			// non-sequitur
 			//std::cout << "ERROR: " << object->getType() << std::endl;

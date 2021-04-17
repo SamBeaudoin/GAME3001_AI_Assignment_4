@@ -14,7 +14,7 @@ PathNode::PathNode()
 	setCurrentHeading(0.0f);// current facing angle
 	setCurrentDirection(glm::vec2(1.0f, 0.0f)); // facing right
 
-	m_middleOfNode = glm::vec2(getTransform()->position.x, getTransform()->position.y);
+	m_middleOfNode = glm::vec2(getTransform()->position.x - 5, getTransform()->position.y - 5);
 
 	setLOSDistance(1000.0f);
 	setLOSColour(glm::vec4(1, 0, 0, 1));

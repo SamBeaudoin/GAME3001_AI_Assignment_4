@@ -73,5 +73,6 @@ private:
 	void m_toggleGrid(bool state);
 
 	void m_findClosestPathNodeWithLOS(Agent* agent);
+	void m_findClosestPathNodeWithoutLOS(Agent* agent);
 };
 #endif /* defined (__PLAY_SCENE__) */

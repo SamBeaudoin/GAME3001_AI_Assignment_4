@@ -22,15 +22,20 @@ public:
 	PigmanState getState() const;
 	int getCooldown() const;
 	int getDespawnTimer() const;
+	int getHideCooldown() const;
 
 	// setters
 	void setState(PigmanState state);
+	void startHideCooldown();
+	void UpdateHideCooldown();
+	
 	void resetCooldown();
 	void StartDespawnTimer();
 
 private:
 	virtual void m_buildAnimations();
 	int m_cooldown;
+	int m_hideCooldown;
 	int m_despawnTimer;
 	int m_soundCooldown;
 

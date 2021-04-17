@@ -18,6 +18,8 @@ Zombie::Zombie() : Enemy()
 	m_decisionTree = new CloseCombatDecisionTree();
 	m_decisionTree->setAgent(this);
 
+	m_attackRange = 50;
+
 	setType(ZOMBIE);
 	setState(ZOMBIE_WALK);
 	m_soundCooldown = (rand() % 301) + 300;
@@ -47,7 +49,7 @@ void Zombie::draw()
 		TextureManager::Instance()->playAnimation("zombie", getAnimation("damage"), x, y, 0.5f, getCurrentHeading(), 255, true);
 		break;
 	case ZOMBIE_ATTACK:
-		TextureManager::Instance()->playAnimation("zombie", getAnimation("attack"), x, y, 0.5f, getCurrentHeading(), 255, true);
+		TextureManager::Instance()->playAnimation("zombie", getAnimation("attack"), x, y, 1.0f, getCurrentHeading(), 255, true);
 		break;
 	}
 
@@ -72,6 +74,7 @@ void Zombie::update()
 			SoundManager::Instance().playSound("zombieIdle" + std::to_string(rand() % 3));
 		}
 	}
+
 	Enemy::update();
 	m_decisionTree->Update();
 }
@@ -142,7 +145,7 @@ void Zombie::m_buildAnimations()
 	setAnimation(damage);
 
 	Animation attack = Animation();
-	damage.name = "attack";
+	attack.name = "attack";
 
 	for (int i = 0; i < 11; i++)
 		attack.frames.push_back(getSpriteSheet()->getFrame("zombie_attack" + std::to_string(i)));

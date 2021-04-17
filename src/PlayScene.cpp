@@ -83,6 +83,7 @@ void PlayScene::update()
 		//update LOS for pigmans and make a decision
 		m_pPigmanSquad[i]->setStevePosition(m_pSteve->getTransform()->position);
 		m_CheckForLOS(m_pPigmanSquad[i], m_pSteve);
+
 		m_pPigmanSquad[i]->MakeDecision();
 
 		//range for checking if Steve is within range of Pigman When attacking
@@ -233,6 +234,7 @@ void PlayScene::update()
 				else {
 					SoundManager::Instance().playSound("pigmanHurt" + std::to_string(rand() % 2));
 					static_cast<Pigman*>(m_pPigmanSquad[j])->resetCooldown();
+					static_cast<Pigman*>(m_pPigmanSquad[j])->startHideCooldown();
 					static_cast<Pigman*>(m_pPigmanSquad[j])->setState(PIGMAN_DAMAGED);
 				}
 				break;
@@ -244,8 +246,23 @@ void PlayScene::update()
 	{
 		if (Util::distance(m_pSteve->getTransform()->position, enemy->getTransform()->position) < enemy->getLOSDistance() && !enemy->hasLOS())
 		{
-			m_findClosestPathNodeWithLOS(enemy);
+			if (enemy->hasLOS())
+				enemy->setStevePosition(m_pSteve->getTransform()->position);
+			else
+				m_findClosestPathNodeWithLOS(enemy);
 		}
+		
+		if (Util::distance(m_pSteve->getTransform()->position, enemy->getTransform()->position) < enemy->getAttackRange() && enemy->hasLOS()) {
+			enemy->setIsWithinAttackRange(true);
+		}
+		else {
+			enemy->setIsWithinAttackRange(false);
+		}
+	}
+
+	for (auto pigman : m_pPigmanSquad) {
+		if (pigman->getIsHideCooldownRunning())
+			m_findClosestPathNodeWithoutLOS(pigman);
 	}
 }
 
@@ -461,8 +478,6 @@ void PlayScene::start()
 	m_pBackground = new Background();
 	addChild(m_pBackground);
 
-	
-
 	//load sounds used
 	loadSounds();
 	SoundManager::Instance().playMusic("calm1");
@@ -493,8 +508,8 @@ void PlayScene::start()
 	//Obstacles in the middle of the map
 	//m_pObstacles.push_back(new Tree(glm::vec2(225.0f, 225.0f)));
 	m_pObstacles.push_back(new Tree(glm::vec2(225.0f, 375.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(525.0f, 275.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(575.0f, 325.0f)));
+	m_pObstacles.push_back(new Tree(glm::vec2(535.0f, 265.0f)));
+	m_pObstacles.push_back(new Tree(glm::vec2(585.0f, 335.0f)));
 	
 	for (auto obstacle : m_pObstacles) {
 		addChild(obstacle);
@@ -640,9 +655,9 @@ void PlayScene::m_CheckForLOS(Agent* first_object, DisplayObject* target_object)
 			first_object->setRadiusDistance(ObjectToTargetDistance);
 		}
 		std::vector<DisplayObject*> contactList;
-		for (auto object : m_pObstacles)
+		for (auto object : getDisplayList())
 		{
-			//if ((object->getType() == PLAYER || object->getType() == OBSTACLE) && object->getType() != target_object->getType()) {
+			if ((object->getType() == PLAYER || object->getType() == OBSTACLE) && first_object != object) {
 
 				// check if obstacle is farther than than the object
 				auto AgentToObstacleDistance = Util::distance(first_object->getTransform()->position, object->getTransform()->position);
@@ -651,7 +666,7 @@ void PlayScene::m_CheckForLOS(Agent* first_object, DisplayObject* target_object)
 				{
 					contactList.push_back(object);
 				}
-			//}
+			}
 		}
 		contactList.push_back(target_object); // add the target to the end of the list
 		bool hasLOS;
@@ -790,6 +805,27 @@ void PlayScene::m_findClosestPathNodeWithLOS(Agent* agent)
 	for (auto path_node : m_pGrid)
 	{
 		if (path_node->hasLOS() && path_node->hasEnemyLOS())
+		{
+			const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
+			if (distance < min)
+			{
+				min = distance;
+				closestPathNode = path_node;
+			}
+		}
+	}
+	if (closestPathNode != nullptr)
+		agent->setDestinationNode(closestPathNode->getNodeMiddle());
+}
+
+void PlayScene::m_findClosestPathNodeWithoutLOS(Agent* agent)
+{
+	auto min = INFINITY;
+	PathNode* closestPathNode = nullptr;
+
+	for (auto path_node : m_pGrid)
+	{
+		if (!path_node->hasLOS() && !path_node->hasEnemyLOS())
 		{
 			const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
 			if (distance < min)

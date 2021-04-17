@@ -19,6 +19,7 @@ public:
 	int getHealth();
 	glm::vec2 getStevePosition();
 	glm::vec2 getTargetPosition();
+	int getAttackRange();
 
 	// setters
 	void setStevePosition(glm::vec2 position);
@@ -27,10 +28,12 @@ public:
 	void takeDamage();
 	void MakeDecision();
 
+	void move(glm::vec2 destination, float currentRotation);
+	glm::vec2 turn(glm::vec2 destination, float currentRotation);
+
 private:
 	void m_checkBounds();
 	virtual void m_buildAnimations() = 0;
-
 
 	float m_maxSpeed;
 	float m_turnRate;
@@ -40,6 +43,7 @@ private:
 
 protected:
 	DecisionTree* m_decisionTree;
+	int m_attackRange;
 };
 
 #endif // !__ENEMY_H__

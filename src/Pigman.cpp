@@ -18,6 +18,8 @@ Pigman::Pigman() : Enemy()
 	m_decisionTree = new RangedCombatDecisionTree();
 	m_decisionTree->setAgent(this);
 
+	m_attackRange = 150;
+
 	setType(PIGMAN);
 	setState(PIGMAN_WALK);
 	m_soundCooldown = (rand() % 301) + 300;
@@ -47,7 +49,7 @@ void Pigman::draw()
 		TextureManager::Instance()->playAnimation("pigman", getAnimation("damage"), x, y, 0.5f, getCurrentHeading(), 255, true);
 		break;
 	case PIGMAN_ATTACK:
-		TextureManager::Instance()->playAnimation("pigman", getAnimation("attack"), x, y, 0.5f, getCurrentHeading(), 255, true);
+		TextureManager::Instance()->playAnimation("pigman", getAnimation("attack"), x, y, 1.0f, getCurrentHeading(), 255, true);
 		break;
 	}
 
@@ -61,7 +63,14 @@ void Pigman::update()
 		if (m_cooldown == 0)
 			setState(PIGMAN_WALK);
 	}
-	else if (m_despawnTimer > 0) {
+
+	if (m_hideCooldown > 0) {
+		setIsHideCooldownRunning(true);
+	}
+	else
+		setIsHideCooldownRunning(false);
+	
+	if (m_despawnTimer > 0) {
 		setState(PIGMAN_DEATH);
 		m_despawnTimer--;
 	}
@@ -96,9 +105,24 @@ int Pigman::getDespawnTimer() const
 	return m_despawnTimer;
 }
 
+int Pigman::getHideCooldown() const
+{
+	return m_hideCooldown;
+}
+
 void Pigman::setState(PigmanState state)
 {
 	m_state = state;
+}
+
+void Pigman::startHideCooldown()
+{
+	m_hideCooldown = 120;
+}
+
+void Pigman::UpdateHideCooldown()
+{
+	m_hideCooldown--;
 }
 
 void Pigman::resetCooldown()
@@ -142,7 +166,7 @@ void Pigman::m_buildAnimations()
 	setAnimation(damage);
 
 	Animation attack = Animation();
-	damage.name = "attack";
+	attack.name = "attack";
 
 	for (int i = 0; i < 6; i++)
 		attack.frames.push_back(getSpriteSheet()->getFrame("pigman_attack" + std::to_string(i)));
