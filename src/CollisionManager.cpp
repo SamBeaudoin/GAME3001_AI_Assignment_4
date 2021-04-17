@@ -413,12 +413,16 @@ bool CollisionManager::LOSCheck(Agent* agent, glm::vec2 end_point, const std::ve
 		case PLAYER:
 			switch (agent->getType())
 			{
-			case PLAYER: // Ship in current example. Can 'ship' see the target.
+			case PATH_NODE:
+				if (lineRectEdgeCheck(start_point, rect_start, width, height))
+					return true;
+				break;
+			case ZOMBIE:
 				if (lineRectCheck(start_point, end_point, rect_start, width, height))
 					return true;
 				break;
-			case PATH_NODE:
-				if (lineRectEdgeCheck(start_point, rect_start, width, height))
+			case PIGMAN:
+				if (lineRectCheck(start_point, end_point, rect_start, width, height))
 					return true;
 				break;
 			default:
@@ -430,6 +434,10 @@ bool CollisionManager::LOSCheck(Agent* agent, glm::vec2 end_point, const std::ve
 		case ZOMBIE:
 			switch (agent->getType())
 			{
+			case ZOMBIE:
+				if (lineRectCheck(start_point, end_point, rect_start, width, height))
+					return true;
+				break;
 			case PATH_NODE:
 				if (lineRectEdgeCheck(start_point, rect_start, width, height))
 					return true;
@@ -441,6 +449,10 @@ bool CollisionManager::LOSCheck(Agent* agent, glm::vec2 end_point, const std::ve
 		case PIGMAN:
 			switch (agent->getType())
 			{
+			case PIGMAN:
+				if (lineRectCheck(start_point, end_point, rect_start, width, height))
+					return true;
+				break;
 			case PATH_NODE:
 				if (lineRectEdgeCheck(start_point, rect_start, width, height))
 					return true;
