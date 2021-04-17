@@ -17,9 +17,9 @@ Enemy::Enemy() : Agent()
 	setCurrentHeading(180.0f); // current facing angle
 	setCurrentDirection(glm::vec2(-1.0f, 0.0f)); // facing left
 	m_turnRate = 5.0f; // 5 degrees per frame
-	m_health = 3;
+	m_health = 1;
 
-	setLOSDistance(350.0f); // 5 ppf x 80 feet
+	setLOSDistance(300.0f); // 5 ppf x 80 feet
 	setLOSColour(glm::vec4(1, 0, 0, 1));
 	setHasLOS(false);	// initialize boolean
 }
