@@ -117,6 +117,56 @@ void PlayScene::update()
 		}
 	}
 
+	// Destroyable Obstacle Checks
+
+	if (m_pDestroyable != nullptr)
+	{
+		for (auto nodes : m_pGrid)
+		{
+			if (CollisionManager::AABBCheck(m_pDestroyable, nodes))
+			{
+				nodes->setEnabled(false);
+			}
+		}
+
+		m_CheckForLOS(m_pSteve, m_pDestroyable);
+		if (m_pSteve->getState() == STEVE_ATTACK && m_pSteve->hasLOS())
+		{
+			m_pDestroyable->takeDamage();
+		}
+
+		for (int i = 0; i < m_pArrowQuiver.size(); i++)
+		{
+			if (CollisionManager::AABBCheck(m_pArrowQuiver[i], m_pDestroyable))
+			{
+				removeChild(m_pArrowQuiver[i]);
+				m_pArrowQuiver[i] = nullptr;
+				m_pArrowQuiver.erase(m_pArrowQuiver.begin() + i);
+				m_pArrowQuiver.shrink_to_fit();
+				m_pDestroyable->takeDamage();
+				break;
+			}
+		}
+
+		// Delete Destroyable Obstacle
+		if (m_pDestroyable->getHealth() <= 0)
+		{
+			removeChild(m_pDestroyable);
+			m_pDestroyable = nullptr;
+			delete m_pDestroyable;
+			m_pLOSDisplayObjects.pop_back();
+			m_pLOSDisplayObjects.shrink_to_fit();
+		}
+	}
+	if (m_pDestroyable == nullptr)
+	{
+		for (auto nodes : m_pGrid)
+		{
+			if (!nodes->isEnabled())
+				nodes->setEnabled(true);
+		}
+	}
+
 	// Delete Arrows
 
 	for (int i = 0; i < m_pArrowQuiver.size(); i++)
@@ -441,7 +491,7 @@ void PlayScene::start()
 	//m_pObstacles.push_back(new Tree(glm::vec2(750.0f, 650.0f)));
 
 	//Obstacles in the middle of the map
-	m_pObstacles.push_back(new Tree(glm::vec2(225.0f, 225.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(225.0f, 225.0f)));
 	m_pObstacles.push_back(new Tree(glm::vec2(225.0f, 375.0f)));
 	m_pObstacles.push_back(new Tree(glm::vec2(525.0f, 275.0f)));
 	m_pObstacles.push_back(new Tree(glm::vec2(575.0f, 325.0f)));
@@ -450,6 +500,12 @@ void PlayScene::start()
 		addChild(obstacle);
 		m_pLOSDisplayObjects.push_back(obstacle);
 	}
+
+	// Destroyable Obstacle
+	m_pDestroyable = new DestroyableObstacle();
+	m_pDestroyable->getTransform()->position = glm::vec2(225.0f, 225.0f);
+	addChild(m_pDestroyable);
+	m_pLOSDisplayObjects.push_back(m_pDestroyable);
 
 	// Build Grid
 	m_buildGrid();
@@ -561,7 +617,6 @@ void PlayScene::GUI_Function()
 
 	ImGui::Separator();
 
-	
 	ImGui::End();
 
 	// Don't Remove this
