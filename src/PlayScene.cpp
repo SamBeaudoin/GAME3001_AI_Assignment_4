@@ -114,7 +114,7 @@ void PlayScene::update()
 			m_pPigmanSquad[i] = nullptr;
 			m_pPigmanSquad.erase(m_pPigmanSquad.begin() + i);
 			m_pPigmanSquad.shrink_to_fit();
-			//m_pPigmanCount->setText("Pigman Count: " + std::to_string(m_pPigmanSquad.size()));
+			m_pPigmanCount->setText("Pigman Count: " + std::to_string(m_pPigmanSquad.size()));
 			break;
 		}
 	}
@@ -275,6 +275,7 @@ void PlayScene::update()
 			m_pZombieArmy[i] = nullptr;
 			m_pZombieArmy.erase(m_pZombieArmy.begin() + i);
 			m_pZombieArmy.shrink_to_fit();
+			m_pZombieCount->setText("Zombie Count: " + std::to_string(m_pZombieArmy.size()));
 			m_enemyNeedsSpawn = true;
 			continue;
 		}
@@ -284,6 +285,7 @@ void PlayScene::update()
 			m_pZombieArmy[i] = nullptr;
 			m_pZombieArmy.erase(m_pZombieArmy.begin() + i);
 			m_pZombieArmy.shrink_to_fit();
+			m_pZombieCount->setText("Zombie Count: " + std::to_string(m_pZombieArmy.size()));
 			m_enemyNeedsSpawn = true;
 			continue;
 		}
@@ -296,6 +298,7 @@ void PlayScene::update()
 			m_pPigmanSquad[i] = nullptr;
 			m_pPigmanSquad.erase(m_pPigmanSquad.begin() + i);
 			m_pPigmanSquad.shrink_to_fit();
+			m_pPigmanCount->setText("Pigman Count: " + std::to_string(m_pPigmanSquad.size()));
 			m_enemyNeedsSpawn = true;
 			continue;
 		}
@@ -305,6 +308,7 @@ void PlayScene::update()
 			m_pPigmanSquad[i] = nullptr;
 			m_pPigmanSquad.erase(m_pPigmanSquad.begin() + i);
 			m_pPigmanSquad.shrink_to_fit();
+			m_pPigmanCount->setText("Pigman Count: " + std::to_string(m_pPigmanSquad.size()));
 			m_enemyNeedsSpawn = true;
 			continue;
 		}
@@ -322,6 +326,7 @@ void PlayScene::update()
 			zomb->AddNode(m_pMapNodes[0]);
 			addChild(zomb);
 			m_pZombieArmy.push_back(zomb);
+			m_pZombieCount->setText("Zombie Count: " + std::to_string(m_pZombieArmy.size()));
 			m_pGangOfEnemies.push_back(zomb);
 			m_enemyNeedsSpawn = false;
 		}
@@ -335,9 +340,21 @@ void PlayScene::update()
 			pig->AddNode(m_pMapNodes[2]);
 			pig->AddNode(m_pMapNodes[8]);
 			m_pPigmanSquad.push_back(pig);
+			m_pPigmanCount->setText("Pigman Count: " + std::to_string(m_pPigmanSquad.size()));
 			m_pGangOfEnemies.push_back(pig);
 			m_enemyNeedsSpawn = false;
 		}
+	}
+
+	for (auto zombie : m_pZombieArmy)
+	{
+		if (zombie->getState() == ZOMBIE_ATTACK && Util::distance(m_pSteve->getTransform()->position, zombie->getTransform()->position) < 100)
+			m_pSteve->m_takeDamage();
+	}
+
+	if (m_pSteve->getHealth() == 0)
+	{
+		// insert label display and restart button and refreshing of scene
 	}
 }
 
@@ -345,6 +362,9 @@ void PlayScene::updateCollisions()
 {
 	for (auto obstacle : m_pObstacles) {
 		CollisionManager::AABBCheck(m_pSteve, obstacle);
+
+		for (auto enemy : m_pGangOfEnemies)
+			CollisionManager::AABBCheck(enemy, obstacle);
 	}
 }
 
@@ -660,10 +680,15 @@ void PlayScene::start()
 	m_pHealth->getTransform()->position = glm::vec2(95.0f, 25.0f);
 	addChild(m_pHealth);
 
-	m_pZombieCount = new Label("", "Minecraft", 30);
+	m_pZombieCount = new Label("", "Minecraft", 27);
 	m_pZombieCount->setText("Zombie Count: " + std::to_string(m_pZombieArmy.size()));
-	m_pZombieCount->getTransform()->position = glm::vec2(550.0f, 25.0f);
+	m_pZombieCount->getTransform()->position = glm::vec2(675.0f, 25.0f);
 	addChild(m_pZombieCount);
+
+	m_pPigmanCount = new Label("", "Minecraft", 27);
+	m_pPigmanCount->setText("Pigman Count: " + std::to_string(m_pPigmanSquad.size()));
+	m_pPigmanCount->getTransform()->position = glm::vec2(420.0f, 25.0f);
+	addChild(m_pPigmanCount);
 }
 
 void PlayScene::GUI_Function() 

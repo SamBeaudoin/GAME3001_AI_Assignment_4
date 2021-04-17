@@ -85,6 +85,9 @@ void Steve::update()
 		m_arrowCooldown--;
 	else if (m_swordSoundCooldown > 0)
 		m_swordSoundCooldown--;
+
+	if (m_damageCooldown > 0)
+		m_damageCooldown--;
 }
 
 void Steve::clean()
@@ -176,6 +179,11 @@ int Steve::getSwordSoundCooldown() const
 	return m_swordSoundCooldown;
 }
 
+int Steve::getHealth() const
+{
+	return m_health;
+}
+
 void Steve::setMaxSpeed(float newSpeed)
 {
 	m_maxSpeed = newSpeed;
@@ -194,6 +202,15 @@ void Steve::setArrowCooldown(int cooldown)
 void Steve::setSwordSoundCooldown(int cooldown)
 {
 	m_swordSoundCooldown = cooldown;
+}
+
+void Steve::m_takeDamage()
+{
+	if (m_damageCooldown <= 0)
+	{
+		m_health--;
+		m_damageCooldown = 120;
+	}
 }
 
 void Steve::m_checkBounds()

@@ -11,6 +11,7 @@ class Steve final : public Agent
 {
 public:
 	friend class Zombie;
+	friend class Pigman;
 	Steve();
 	~Steve();
 
@@ -32,12 +33,15 @@ public:
 	SteveState getState() const;
 	int getArrowCooldown() const;
 	int getSwordSoundCooldown() const;
+	int getHealth() const;
 
 	// setters
 	void setMaxSpeed(float newSpeed);
 	void setState(SteveState state);
 	void setArrowCooldown(int cooldown);
 	void setSwordSoundCooldown(int cooldown);
+
+	void m_takeDamage();
 
 private:
 	void m_checkBounds();
@@ -48,6 +52,7 @@ private:
 	float m_maxSpeed;
 	float m_turnRate;
 	int m_health;
+	int m_damageCooldown;
 
 	//others
 	int m_arrowCooldown;

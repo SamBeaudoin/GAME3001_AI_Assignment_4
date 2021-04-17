@@ -21,4 +21,5 @@ void AttackAction::Action()
 
 	if (static_cast<Zombie*>(getAgent())->getState() != ZOMBIE_DAMAGED && static_cast<Zombie*>(getAgent())->getState() != ZOMBIE_DEATH)
 		static_cast<Zombie*>(getAgent())->setState(ZOMBIE_ATTACK);
+
 }

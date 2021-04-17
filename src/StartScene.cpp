@@ -50,7 +50,7 @@ void StartScene::start()
 	const SDL_Color gold = { 218, 165, 32 };
 	const SDL_Color orange = { 255, 140, 0 };
 
-	m_pStartLabel = new Label("Assignment 3", "Minecraft", 80, blue, glm::vec2(400.0f, 60.0f));
+	m_pStartLabel = new Label("Assignment 4", "Minecraft", 80, blue, glm::vec2(400.0f, 60.0f));
 	m_pStartLabel->setParent(this);
 	addChild(m_pStartLabel);
 
