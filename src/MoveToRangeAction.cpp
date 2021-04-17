@@ -15,6 +15,12 @@ MoveToRangeAction::~MoveToRangeAction()
 void MoveToRangeAction::Action()
 {
 	auto destination = static_cast<Enemy*>(getAgent())->getStevePosition() + glm::vec2(20.0f, 20.0f);
+
+	if (Util::distance(static_cast<Enemy*>(getAgent())->getStevePosition(), getAgent()->getTransform()->position))
+	{
+
+	}
+
 	auto currentRotation = getAgent()->getCurrentHeading();
 
 	static_cast<Enemy*>(getAgent())->move(destination, currentRotation);
