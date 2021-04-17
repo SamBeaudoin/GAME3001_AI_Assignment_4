@@ -26,9 +26,13 @@ public:
 
 	// setters
 	void setState(PigmanState state);
+<<<<<<< HEAD
 	void startHideCooldown();
 	void UpdateHideCooldown();
 	
+=======
+	void setHideCooldown(int x);
+>>>>>>> 21eefb24dd2236214ec65afceaa5e65d3693bbbd
 	void resetCooldown();
 	void StartDespawnTimer();
 
@@ -38,6 +42,7 @@ private:
 	int m_hideCooldown;
 	int m_despawnTimer;
 	int m_soundCooldown;
+	int m_hideCooldown;
 
 	//State
 	PigmanState m_state;

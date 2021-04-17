@@ -44,8 +44,8 @@ private:
 
 	Target* m_pTarget;
 	Steve* m_pSteve;
-	std::vector<Enemy*> m_pZombieArmy;
-	std::vector<Enemy*> m_pPigmanSquad;
+	std::vector<Zombie*> m_pZombieArmy;
+	std::vector<Pigman*> m_pPigmanSquad;
 	std::vector<Obstacle*> m_pObstacles;
 	DestroyableObstacle* m_pDestroyable;
 	std::vector<MapNodes*> m_pMapNodes;
@@ -53,6 +53,8 @@ private:
 	std::vector<DisplayObject*> m_pLOSDisplayObjects;
 	std::vector<Enemy*> m_pGangOfEnemies;
 	void m_CheckForLOS(Agent* first_object, DisplayObject* target_object);
+
+	bool m_enemyNeedsSpawn;
 
 	Label* m_pHealth;
 	Label* m_pZombieCount;
@@ -70,9 +72,12 @@ private:
 	void m_CheckPathNodeLOS();
 
 	bool m_gridVisible;
-	void m_toggleGrid(bool state);
 
 	void m_findClosestPathNodeWithLOS(Agent* agent);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 21eefb24dd2236214ec65afceaa5e65d3693bbbd
 	void m_findClosestPathNodeWithoutLOS(Agent* agent);
 };
 #endif /* defined (__PLAY_SCENE__) */
