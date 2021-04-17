@@ -17,6 +17,7 @@
 #include "Arrow.h"
 #include "Background.h"
 #include "PathNode.h"
+#include "DestroyableObstacle.h"
 
 class PlayScene : public Scene
 {
@@ -46,6 +47,7 @@ private:
 	std::vector<Enemy*> m_pZombieArmy;
 	std::vector<Enemy*> m_pPigmanSquad;
 	std::vector<Obstacle*> m_pObstacles;
+	DestroyableObstacle* m_pDestroyable;
 	std::vector<MapNodes*> m_pMapNodes;
 	std::vector<Arrow*> m_pArrowQuiver;
 	std::vector<DisplayObject*> m_pLOSDisplayObjects;
