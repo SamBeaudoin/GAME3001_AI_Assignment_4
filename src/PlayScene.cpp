@@ -573,18 +573,21 @@ void PlayScene::GUI_Function()
 void PlayScene::m_CheckForLOS(Agent* first_object, DisplayObject* target_object)
 {
 	first_object->setHasLOS(false);
-	first_object->setIsWithinRadius(false);
+	if (first_object->getType() != PATH_NODE)
+		first_object->setIsWithinRadius(false);
 	// if ship to target distance is less than or equal to LOS Distance
 	auto ObjectToTargetDistance = Util::distance(first_object->getTransform()->position, target_object->getTransform()->position);
 
 	if (ObjectToTargetDistance <= first_object->getLOSDistance())
 	{
-		first_object->setIsWithinRadius(true);
-		first_object->setRadiusDistance(ObjectToTargetDistance);
+		if (first_object->getType() != PATH_NODE) {
+			first_object->setIsWithinRadius(true);
+			first_object->setRadiusDistance(ObjectToTargetDistance);
+		}
 		std::vector<DisplayObject*> contactList;
-		for (auto object : getDisplayList())
+		for (auto object : m_pObstacles)
 		{
-			if (object->getType() == PLAYER || object->getType() == OBSTACLE) {
+			//if ((object->getType() == PLAYER || object->getType() == OBSTACLE) && object->getType() != target_object->getType()) {
 
 				// check if obstacle is farther than than the object
 				auto AgentToObstacleDistance = Util::distance(first_object->getTransform()->position, object->getTransform()->position);
@@ -593,13 +596,13 @@ void PlayScene::m_CheckForLOS(Agent* first_object, DisplayObject* target_object)
 				{
 					contactList.push_back(object);
 				}
-			}
+			//}
 		}
 		contactList.push_back(target_object); // add the target to the end of the list
 		bool hasLOS;
-		const auto agentTarget = first_object->getTransform()->position + first_object->getCurrentDirection() * first_object->getLOSDistance();
+
 		if (first_object->getType() == PLAYER)
-			hasLOS = CollisionManager::LOSCheck(first_object, agentTarget, contactList, target_object);
+			hasLOS = CollisionManager::LOSCheck(first_object, first_object->getTransform()->position + first_object->getCurrentDirection() * first_object->getLOSDistance(), contactList, target_object);
 		else
 			hasLOS = CollisionManager::LOSCheck(first_object, target_object->getTransform()->position, contactList, target_object);
 
@@ -670,9 +673,9 @@ bool PlayScene::m_CheckForEnemyLOS(PathNode* node, Enemy* enemy)
 	if (NodeToEnemyDistance <= enemy->getLOSDistance()) {
 		std::vector<DisplayObject*> contactList;
 
-		for (auto display_object : getDisplayList()) {
+		for (auto display_object : m_pObstacles) {
 
-			if (display_object->getType() == OBSTACLE && (display_object->getType() == ZOMBIE || display_object->getType() == PIGMAN)) {
+			if (display_object->getType() == OBSTACLE) {
 				auto NodeToObstacleDistance = Util::distance(node->getTransform()->position, display_object->getTransform()->position);
 
 				if (NodeToObstacleDistance <= NodeToEnemyDistance)
