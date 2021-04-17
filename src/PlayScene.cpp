@@ -816,14 +816,30 @@ bool PlayScene::m_CheckForEnemyLOS(PathNode* node, Enemy* enemy)
 
 			if (display_object->getType() == OBSTACLE) {
 				auto NodeToObstacleDistance = Util::distance(node->getTransform()->position, display_object->getTransform()->position);
+				const auto nodeTarget = node->getTransform()->position + node->getCurrentDirection() * node->getLOSDistance();
 
 				if (NodeToObstacleDistance <= NodeToEnemyDistance)
 				{
+					hasLOS = CollisionManager::LOSCheck(node, nodeTarget, contactList, enemy);
 					contactList.push_back(display_object);
+					node->setHasEnemyLOS(hasLOS);
+				}
+				else
+				{
+					contactList.push_back(display_object);
+					node->setHasEnemyLOS(true);
 				}
 			}
 		}
 		contactList.push_back(enemy); // add the target to the end of the list
+		const auto nodeTarget = node->getTransform()->position + node->getCurrentDirection() * node->getLOSDistance();
+
+		hasLOS = CollisionManager::LOSCheck(node, nodeTarget, contactList, enemy);
+		//node->setHasEnemyLOS(hasLOS);
+	}
+	else
+	{
+		std::vector<DisplayObject*> contactList;
 		const auto nodeTarget = node->getTransform()->position + node->getCurrentDirection() * node->getLOSDistance();
 
 		hasLOS = CollisionManager::LOSCheck(node, nodeTarget, contactList, enemy);
@@ -853,8 +869,6 @@ void PlayScene::m_CheckPathNodeLOS()
 		for (auto pigman : m_pPigmanSquad) {
 			if (m_CheckForEnemyLOS(path_node, pigman))
 				break;
-			else 
-				path_node->setHasEnemyLOS(false);
 		}
 	}
 }

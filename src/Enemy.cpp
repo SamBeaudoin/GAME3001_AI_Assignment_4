@@ -22,7 +22,7 @@ Enemy::Enemy() : Agent()
 	m_turnRate = 5.0f; // 5 degrees per frame
 	m_health = 4;
 
-	setLOSDistance(350.0f); // 5 ppf x 80 feet
+	setLOSDistance(300.0f); // 5 ppf x 80 feet
 	setLOSColour(glm::vec4(1, 0, 0, 1));
 	setHasLOS(false);	// initialize boolean
 }
