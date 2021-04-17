@@ -105,7 +105,7 @@ void PlayScene::update()
 				static_cast<Pigman*>(m_pPigmanSquad[i])->setState(PIGMAN_DAMAGED);
 			}
 		}
-
+		
 		//remove pigman when their despawn timer is up
 		if (static_cast<Pigman*>(m_pPigmanSquad[i])->getDespawnTimer() == 0 && static_cast<Pigman*>(m_pPigmanSquad[i])->getState() == PIGMAN_DEATH) {
 			removeChild(m_pPigmanSquad[i]);
@@ -118,7 +118,6 @@ void PlayScene::update()
 	}
 
 	// Destroyable Obstacle Checks
-
 	if (m_pDestroyable != nullptr)
 	{
 		for (auto nodes : m_pGrid)
@@ -168,7 +167,6 @@ void PlayScene::update()
 	}
 
 	// Delete Arrows
-
 	for (int i = 0; i < m_pArrowQuiver.size(); i++)
 	{
 		for (int j = 0; j < m_pObstacles.size(); j++)
@@ -225,6 +223,9 @@ void PlayScene::update()
 
 				m_pPigmanSquad[j]->takeDamage();
 
+				m_pPigmanSquad[j]->setIsHideCooldownRunning(true);
+				m_pPigmanSquad[j]->setHideCooldown(1200);				// TODO: to be changed later
+
 				if (m_pPigmanSquad[j]->getHealth() <= 0) {
 					SoundManager::Instance().playSound("pigmanDeath");
 					static_cast<Pigman*>(m_pPigmanSquad[j])->StartDespawnTimer();
@@ -245,6 +246,80 @@ void PlayScene::update()
 		if (Util::distance(m_pSteve->getTransform()->position, enemy->getTransform()->position) < enemy->getLOSDistance() && !enemy->hasLOS())
 		{
 			m_findClosestPathNodeWithLOS(enemy);
+		}
+	}
+
+	// enemy off screen deletion
+	for (int i = 0; i < m_pZombieArmy.size(); i++)
+	{
+		if (m_pZombieArmy[i]->getTransform()->position.y <= -100)
+		{
+			removeChild(m_pZombieArmy[i]);
+			m_pZombieArmy[i] = nullptr;
+			m_pZombieArmy.erase(m_pZombieArmy.begin() + i);
+			m_pZombieArmy.shrink_to_fit();
+			m_enemyNeedsSpawn = true;
+			continue;
+		}
+		if (m_pZombieArmy[i]->getTransform()->position.y >= 700)
+		{
+			removeChild(m_pZombieArmy[i]);
+			m_pZombieArmy[i] = nullptr;
+			m_pZombieArmy.erase(m_pZombieArmy.begin() + i);
+			m_pZombieArmy.shrink_to_fit();
+			m_enemyNeedsSpawn = true;
+			continue;
+		}
+	}
+	for (int i = 0; i < m_pPigmanSquad.size(); i++)
+	{
+		if (m_pPigmanSquad[i]->getTransform()->position.y <= -100)
+		{
+			removeChild(m_pPigmanSquad[i]);
+			m_pPigmanSquad[i] = nullptr;
+			m_pPigmanSquad.erase(m_pPigmanSquad.begin() + i);
+			m_pPigmanSquad.shrink_to_fit();
+			m_enemyNeedsSpawn = true;
+			continue;
+		}
+		if (m_pPigmanSquad[i]->getTransform()->position.y >= 700)
+		{
+			removeChild(m_pPigmanSquad[i]);
+			m_pPigmanSquad[i] = nullptr;
+			m_pPigmanSquad.erase(m_pPigmanSquad.begin() + i);
+			m_pPigmanSquad.shrink_to_fit();
+			m_enemyNeedsSpawn = true;
+			continue;
+		}
+	}
+
+	if (m_enemyNeedsSpawn)
+	{
+		if (rand() % 2 == 0)
+		{
+			Zombie* zomb = new Zombie();
+			zomb->getTransform()->position = glm::vec2(707.0f, -90.0f);
+			zomb->setDestinationNode(m_pMapNodes[6]);
+			zomb->AddNode(m_pMapNodes[6]);
+			zomb->AddNode(m_pMapNodes[3]);
+			zomb->AddNode(m_pMapNodes[0]);
+			addChild(zomb);
+			m_pZombieArmy.push_back(zomb);
+			m_pGangOfEnemies.push_back(zomb);
+			m_enemyNeedsSpawn = false;
+		}
+		else
+		{
+			Pigman* pig = new Pigman();
+			pig->getTransform()->position = glm::vec2(382.0f, 640.0f);
+			addChild(pig);
+			pig->setDestinationNode(m_pMapNodes[5]);
+			pig->AddNode(m_pMapNodes[5]);
+			pig->AddNode(m_pMapNodes[2]);
+			pig->AddNode(m_pMapNodes[8]);
+			m_pPigmanSquad.push_back(pig);
+			m_pGangOfEnemies.push_back(pig);
+			m_enemyNeedsSpawn = false;
 		}
 	}
 }
@@ -375,6 +450,10 @@ void PlayScene::handleEvents()
 		// Boundaries, and Node points.
 		if (!m_debugToggle) {
 			m_debugToggle = true;
+			for (auto path_node : m_pGrid)
+			{
+				path_node->getDebugMode() ? path_node->setDebugMode(false) : path_node->setDebugMode(true);
+			}
 
 			for (int i = 0; i < m_pZombieArmy.size(); i++)
 				m_pZombieArmy[i]->getDebugMode() ? m_pZombieArmy[i]->setDebugMode(false) : m_pZombieArmy[i]->setDebugMode(true);
@@ -446,11 +525,6 @@ void PlayScene::handleEvents()
 			SoundManager::Instance().playSound("shoot");
 		}
 	}
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_G))
-	{
-		m_gridVisible = !m_gridVisible;
-		m_toggleGrid(m_gridVisible);
-	}
 }
 
 void PlayScene::start()
@@ -460,8 +534,6 @@ void PlayScene::start()
 
 	m_pBackground = new Background();
 	addChild(m_pBackground);
-
-	
 
 	//load sounds used
 	loadSounds();
@@ -593,12 +665,6 @@ void PlayScene::GUI_Function()
 	// allow ship rotation
 	
 	ImGui::Separator();
-
-	static bool gridVisible = true;
-	if (ImGui::Checkbox("Toggle Grid", &gridVisible))
-	{
-		m_toggleGrid(gridVisible);
-	}
 	
 	ImGui::Separator();
 	
@@ -789,15 +855,6 @@ void PlayScene::m_CheckPathNodeLOS()
 	}
 }
 
-void PlayScene::m_toggleGrid(bool state)
-{
-
-	for (auto path_node : m_pGrid)
-	{
-		path_node->setVisible(state);
-	}
-}
-
 void PlayScene::m_findClosestPathNodeWithLOS(Agent* agent)
 {
 	auto min = agent->getLOSDistance();
@@ -817,4 +874,26 @@ void PlayScene::m_findClosestPathNodeWithLOS(Agent* agent)
 	}
 	if (closestPathNode != nullptr)
 		agent->setDestinationNode(closestPathNode->getNodeMiddle());
+}
+
+void PlayScene::m_findClosestPathNodeWithoutLOS(Agent* agent)
+{
+	auto min = agent->getLOSDistance();
+	PathNode* closestPathNode = nullptr;
+
+	for (auto path_node : m_pGrid)
+	{
+		if (!path_node->hasLOS() && !path_node->hasEnemyLOS())
+		{
+			const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
+			if (distance < min)
+			{
+				min = distance;
+				closestPathNode = path_node;
+			}
+		}
+	}
+	if (closestPathNode != nullptr)
+		agent->setDestinationNode(closestPathNode->getNodeMiddle());
+
 }
