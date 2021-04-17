@@ -1,7 +1,7 @@
 #include "GameObject.h"
 
-GameObject::GameObject():
-	m_width(0), m_height(0), m_type(NONE), m_enabled(true)
+GameObject::GameObject() :
+	m_width(0), m_height(0), m_type(NONE), m_enabled(true), m_visible(true)
 {
 }
 

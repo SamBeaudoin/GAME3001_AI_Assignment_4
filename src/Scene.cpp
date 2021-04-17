@@ -95,6 +95,8 @@ void Scene::drawDisplayList()
 		{
 			if (!count->isEnabled())
 				break;
+			if (!count->isVisible())
+				break;
 			count->draw();
 		}
 	}
