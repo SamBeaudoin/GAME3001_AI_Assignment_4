@@ -15,6 +15,8 @@ Pigman::Pigman() : Enemy()
 	setWidth(64);
 	setHeight(64);
 
+	m_hideCooldown = 0;
+
 	m_decisionTree = new RangedCombatDecisionTree();
 	m_decisionTree->setAgent(this);
 
@@ -72,6 +74,10 @@ void Pigman::update()
 			SoundManager::Instance().playSound("zombieIdle" + std::to_string(rand() % 3));
 		}
 	}
+
+	m_hideCooldown--;
+	if (m_hideCooldown <= 0) { setIsHideCooldownRunning(false); }
+
 	Enemy::update();
 	m_decisionTree->Update();
 }
@@ -96,9 +102,19 @@ int Pigman::getDespawnTimer() const
 	return m_despawnTimer;
 }
 
+int Pigman::getHideCooldown() const
+{
+	return m_hideCooldown;
+}
+
 void Pigman::setState(PigmanState state)
 {
 	m_state = state;
+}
+
+void Pigman::setHideCooldown(int x)
+{
+	m_hideCooldown = x;
 }
 
 void Pigman::resetCooldown()
