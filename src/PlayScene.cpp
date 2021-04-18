@@ -444,6 +444,12 @@ void PlayScene::updateCollisions()
 		for (auto enemy : m_pGangOfEnemies)
 			CollisionManager::AABBCheck(enemy, obstacle);
 	}
+	if (m_pDestroyable != nullptr)
+	{
+		for (auto enemy : m_pGangOfEnemies)
+			CollisionManager::AABBCheck(enemy, m_pDestroyable);
+	}
+	CollisionManager::AABBCheck(m_pSteve, m_pDestroyable);
 }
 
 void PlayScene::clean()
