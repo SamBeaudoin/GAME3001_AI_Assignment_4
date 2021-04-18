@@ -32,10 +32,13 @@ void PlayScene::update()
 {
 	updateDisplayList();
 
+	// Node Updates
 	m_CheckPathNodeLOS();
 
+	// Obtacle Collision
 	updateCollisions();
 
+	// Steve Facing
 	m_pSteve->faceMouse();
 
 	// For Pigman within range
@@ -130,12 +133,14 @@ void PlayScene::update()
 			}
 		}
 
+		// Melee Destroyable
 		m_CheckForLOS(m_pSteve, m_pDestroyable);
 		if (m_pSteve->getState() == STEVE_ATTACK && m_pSteve->hasLOS())
 		{
 			m_pDestroyable->takeDamage();
 		}
 
+		// Shooting Destroyable obstacle
 		for (int i = 0; i < m_pArrowQuiver.size(); i++)
 		{
 			if (CollisionManager::AABBCheck(m_pArrowQuiver[i], m_pDestroyable))
@@ -159,6 +164,8 @@ void PlayScene::update()
 			m_pLOSDisplayObjects.shrink_to_fit();
 		}
 	}
+
+	// enable hidden nodes behind Destructible obstacle
 	if (m_pDestroyable == nullptr)
 	{
 		for (auto nodes : m_pGrid)
@@ -182,6 +189,7 @@ void PlayScene::update()
 			}
 	}
 
+	// Arrow deletion with Zombois
 	for (int i = 0; i < m_pArrowQuiver.size(); i++)
 	{
 		for (int j = 0; j < m_pZombieArmy.size(); j++)
@@ -211,6 +219,7 @@ void PlayScene::update()
 		}
 	}
 
+	// Arrow deletion with piggies
 	for (int i = 0; i < m_pArrowQuiver.size(); i++)
 	{
 		for (int j = 0; j < m_pPigmanSquad.size(); j++)
@@ -263,6 +272,7 @@ void PlayScene::update()
 		}
 	}
 
+	// For triggering of Create Distance node in Pigman tree
 	for (auto pigman : m_pPigmanSquad) {
 		if (pigman->getIsHideCooldownRunning())
 			m_findClosestPathNodeWithoutLOS(pigman);
@@ -298,6 +308,7 @@ void PlayScene::update()
 			continue;
 		}
 	}
+	// Delete Piggies if off screen
 	for (int i = 0; i < m_pPigmanSquad.size(); i++)
 	{
 		if (m_pPigmanSquad[i]->getTransform()->position.y <= -100)
@@ -322,6 +333,7 @@ void PlayScene::update()
 		}
 	}
 
+	// Dynamic spawning of enemies // Can add timer for a wait period
 	if (m_enemyNeedsSpawn)
 	{
 		if (rand() % 2 == 0)
@@ -354,6 +366,7 @@ void PlayScene::update()
 		}
 	}
 
+	// Zombie damges Steve
 	for (auto zombie : m_pZombieArmy)
 	{
 		if (zombie->getState() == ZOMBIE_ATTACK && Util::distance(m_pSteve->getTransform()->position, zombie->getTransform()->position) < 100)

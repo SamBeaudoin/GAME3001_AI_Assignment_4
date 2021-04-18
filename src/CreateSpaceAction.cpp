@@ -15,7 +15,7 @@ CreateSpaceAction::~CreateSpaceAction()
 
 void CreateSpaceAction::Action()
 {
-	auto destination = getAgent()->getTransform()->position;
+	auto destination = getAgent()->getTransform()->position;	// If flee is updated update this aswell
 	auto currentRotation = getAgent()->getCurrentHeading();
 
 	if (destination.y >= 300)
