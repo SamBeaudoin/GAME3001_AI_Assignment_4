@@ -401,6 +401,7 @@ void PlayScene::update()
 			zomb->AddNode(m_pMapNodes[6]);
 			zomb->AddNode(m_pMapNodes[3]);
 			zomb->AddNode(m_pMapNodes[0]);
+			zomb->setDebugMode(m_debugIsOn);
 			addChild(zomb);
 			m_pZombieArmy.push_back(zomb);
 			m_pZombieCount->setText("Zombie Count: " + std::to_string(m_pZombieArmy.size()));
@@ -416,6 +417,7 @@ void PlayScene::update()
 			pig->AddNode(m_pMapNodes[5]);
 			pig->AddNode(m_pMapNodes[2]);
 			pig->AddNode(m_pMapNodes[8]);
+			pig->setDebugMode(m_debugIsOn);
 			m_pPigmanSquad.push_back(pig);
 			m_pPigmanCount->setText("Pigman Count: " + std::to_string(m_pPigmanSquad.size()));
 			m_pGangOfEnemies.push_back(pig);
@@ -613,6 +615,7 @@ void PlayScene::handleEvents()
 			for (int i = 0; i < m_pObstacles.size(); i++)
 				m_pObstacles[i]->getDebugMode() ? m_pObstacles[i]->setDebugMode(false) : m_pObstacles[i]->setDebugMode(true);
 		}
+		m_debugIsOn ? m_debugIsOn = false : m_debugIsOn = true;
 	}
 	else if (EventManager::Instance().isKeyUp(SDL_SCANCODE_H))
 	{
