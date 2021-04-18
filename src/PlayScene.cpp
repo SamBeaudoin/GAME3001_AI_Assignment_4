@@ -381,14 +381,16 @@ void PlayScene::clean()
 
 void PlayScene::handleEvents()
 {
-	if (m_pZombieArmy.size() <= 0 && m_pPigmanSquad.size() <= 0 && !m_pWinMenu->getWin() && m_enemyNeedsSpawn == true)
+	if (m_pZombieArmy.size() <= 0 && m_pPigmanSquad.size() <= 0 && m_enemyNeedsSpawn == false)
 	{
+		//std::cout << "Not a Win" << std::endl;
 		std::cout << "Win" << std::endl;
 		m_pWinMenu->setWin(true);
 	}
-	else
+
+	if (m_pWinMenu->getRestart())
 	{
-		std::cout << "No Win" << std::endl;
+		TheGame::Instance()->changeSceneState(START_SCENE);
 	}
 
 	EventManager::Instance().update();
@@ -413,7 +415,7 @@ void PlayScene::handleEvents()
 	{
 		if (!m_zombieWalkToggle) {
 			m_zombieWalkToggle = true;
-			
+
 			for (auto zombie : m_pZombieArmy)
 				static_cast<Zombie*>(zombie)->setState(static_cast<Zombie*>(zombie)->getState() == ZOMBIE_IDLE ? ZOMBIE_WALK : ZOMBIE_IDLE);
 		}
@@ -432,12 +434,12 @@ void PlayScene::handleEvents()
 		if (m_pigmanWalkToggle)
 			m_pigmanWalkToggle = false;
 	}
-	
-	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_K))
+
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_K))
 	{
 		// Debug key
 		// All enemies take damage
-		
+
 		for (int i = 0; i < m_pZombieArmy.size(); i++)
 		{
 			if (static_cast<Zombie*>(m_pZombieArmy[i])->getState() != ZOMBIE_DAMAGED)

@@ -177,7 +177,6 @@ void Game::changeSceneState(const SceneState new_state)
 			break;
 		}
 	}
-	
 }
 
 void Game::quit()
