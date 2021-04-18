@@ -401,6 +401,7 @@ void PlayScene::update()
 			zomb->AddNode(m_pMapNodes[6]);
 			zomb->AddNode(m_pMapNodes[3]);
 			zomb->AddNode(m_pMapNodes[0]);
+			zomb->setDebugMode(m_debugIsOn);
 			addChild(zomb);
 			m_pZombieArmy.push_back(zomb);
 			m_pZombieCount->setText("Zombie Count: " + std::to_string(m_pZombieArmy.size()));
@@ -416,6 +417,7 @@ void PlayScene::update()
 			pig->AddNode(m_pMapNodes[5]);
 			pig->AddNode(m_pMapNodes[2]);
 			pig->AddNode(m_pMapNodes[8]);
+			pig->setDebugMode(m_debugIsOn);
 			m_pPigmanSquad.push_back(pig);
 			m_pPigmanCount->setText("Pigman Count: " + std::to_string(m_pPigmanSquad.size()));
 			m_pGangOfEnemies.push_back(pig);
@@ -434,6 +436,10 @@ void PlayScene::update()
 	{
 		// insert label display and restart button and refreshing of scene
 	}
+
+	// Activate Lose Scene
+	if (m_pSteve->getHealth() <= 0)
+		TheGame::Instance()->changeSceneState(END_SCENE);
 }
 
 void PlayScene::updateCollisions()
@@ -441,15 +447,20 @@ void PlayScene::updateCollisions()
 	for (auto obstacle : m_pObstacles) {
 		CollisionManager::AABBCheck(m_pSteve, obstacle);
 
-		for (auto enemy : m_pGangOfEnemies)
+		for (auto enemy : m_pGangOfEnemies) {
 			CollisionManager::AABBCheck(enemy, obstacle);
+
+			if (CollisionManager::AABBCheck(enemy, obstacle->GetDetection()))
+				enemy->setDetectRect(obstacle->GetDetection());
+		}
 	}
 	if (m_pDestroyable != nullptr)
 	{
 		for (auto enemy : m_pGangOfEnemies)
 			CollisionManager::AABBCheck(enemy, m_pDestroyable);
+
+		CollisionManager::AABBCheck(m_pSteve, m_pDestroyable);
 	}
-	CollisionManager::AABBCheck(m_pSteve, m_pDestroyable);
 }
 
 void PlayScene::clean()
@@ -459,6 +470,8 @@ void PlayScene::clean()
 
 void PlayScene::handleEvents()
 {
+	
+	// Activate Win Scene
 	if (m_pZombieArmy.size() <= 0 && m_pPigmanSquad.size() <= 0 && m_enemyNeedsSpawn == false)
 	{
 		//std::cout << "Not a Win" << std::endl;
@@ -602,6 +615,7 @@ void PlayScene::handleEvents()
 			for (int i = 0; i < m_pObstacles.size(); i++)
 				m_pObstacles[i]->getDebugMode() ? m_pObstacles[i]->setDebugMode(false) : m_pObstacles[i]->setDebugMode(true);
 		}
+		m_debugIsOn ? m_debugIsOn = false : m_debugIsOn = true;
 	}
 	else if (EventManager::Instance().isKeyUp(SDL_SCANCODE_H))
 	{
@@ -684,12 +698,14 @@ void PlayScene::start()
 	//m_pObstacles.push_back(new Tree(glm::vec2(350.0f, -50.0f)));
 	//m_pObstacles.push_back(new Tree(glm::vec2(550.0f, -50.0f)));
 	//m_pObstacles.push_back(new Tree(glm::vec2(750.0f, -50.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, 150.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(850.0f, 150.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, 350.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(850.0f, 350.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, 550.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(850.0f, 550.0f)));
+
+	//m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, 150.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(850.0f, 150.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, 350.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(850.0f, 350.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, 550.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(850.0f, 550.0f)));
+
 	//m_pObstacles.push_back(new Tree(glm::vec2(150.0f, 650.0f)));
 	//m_pObstacles.push_back(new Tree(glm::vec2(350.0f, 650.0f)));
 	//m_pObstacles.push_back(new Tree(glm::vec2(550.0f, 650.0f)));
@@ -702,6 +718,7 @@ void PlayScene::start()
 	m_pObstacles.push_back(new Tree(glm::vec2(585.0f, 335.0f)));
 	
 	for (auto obstacle : m_pObstacles) {
+		obstacle->UpdateDetection();
 		addChild(obstacle);
 		m_pLOSDisplayObjects.push_back(obstacle);
 	}
@@ -716,21 +733,21 @@ void PlayScene::start()
 	m_buildGrid();
 
 	//nodes for navigation
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(55.0f,50.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(55.0f,250.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(55.0f,485.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(350.0f,50.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(350.0f,250.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(350.0f,485.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(675.0f,50.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(675.0f,250.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(675.0f,485.0f)));
+	m_pMapNodes.push_back(new MapNodes(glm::vec2(30.0f, 50.0f)));
+	m_pMapNodes.push_back(new MapNodes(glm::vec2(30.0f, 300.0f)));
+	m_pMapNodes.push_back(new MapNodes(glm::vec2(30.0f, 550.0f)));
+	m_pMapNodes.push_back(new MapNodes(glm::vec2(350.0f, 50.0f)));
+	m_pMapNodes.push_back(new MapNodes(glm::vec2(350.0f, 300.0f)));
+	m_pMapNodes.push_back(new MapNodes(glm::vec2(350.0f, 550.0f)));
+	m_pMapNodes.push_back(new MapNodes(glm::vec2(750.0f, 50.0f)));
+	m_pMapNodes.push_back(new MapNodes(glm::vec2(750.0f, 300.0f)));
+	m_pMapNodes.push_back(new MapNodes(glm::vec2(750.0f, 550.0f)));
 
 	for (auto nodes : m_pMapNodes)
 		addChild(nodes);
 
 	// add Zombies and set their paths
-	Zombie* zomb = new Zombie();
+	/*Zombie* zomb = new Zombie();
 	zomb->getTransform()->position = m_pMapNodes[6]->getNodeMiddle();
 	zomb->AddNode(m_pMapNodes[6]);
 	zomb->AddNode(m_pMapNodes[3]);
@@ -738,9 +755,9 @@ void PlayScene::start()
 	zomb->AddNode(m_pMapNodes[0]);
 	addChild(zomb);
 	m_pZombieArmy.push_back(zomb);
-	m_pGangOfEnemies.push_back(zomb);
+	m_pGangOfEnemies.push_back(zomb);*/
 
-	zomb = new Zombie();
+	Zombie* zomb = new Zombie();
 	zomb->getTransform()->position = m_pMapNodes[8]->getNodeMiddle();
 	addChild(zomb);
 	zomb->AddNode(m_pMapNodes[8]);
@@ -761,7 +778,7 @@ void PlayScene::start()
 	m_pPigmanSquad.push_back(pig);
 	m_pGangOfEnemies.push_back(pig);
 
-	pig = new Pigman();
+	/*pig = new Pigman();
 	pig->getTransform()->position = m_pMapNodes[5]->getNodeMiddle();
 	addChild(pig);
 	pig->AddNode(m_pMapNodes[5]);
@@ -769,19 +786,19 @@ void PlayScene::start()
 	pig->setDestinationNode(m_pMapNodes[2]);
 	pig->AddNode(m_pMapNodes[8]);
 	m_pPigmanSquad.push_back(pig);
-	m_pGangOfEnemies.push_back(pig);
+	m_pGangOfEnemies.push_back(pig);*/
 
 	//Labels
 	m_pHealth = new Label("Current HP: ", "Minecraft", 30);
 	m_pHealth->getTransform()->position = glm::vec2(95.0f, 25.0f);
 	addChild(m_pHealth);
 
-	m_pZombieCount = new Label("", "Minecraft", 27);
+	m_pZombieCount = new Label("", "Minecraft", 30);
 	m_pZombieCount->setText("Zombie Count: " + std::to_string(m_pZombieArmy.size()));
 	m_pZombieCount->getTransform()->position = glm::vec2(675.0f, 25.0f);
 	addChild(m_pZombieCount);
 
-	m_pPigmanCount = new Label("", "Minecraft", 27);
+	m_pPigmanCount = new Label("", "Minecraft", 30);
 	m_pPigmanCount->setText("Pigman Count: " + std::to_string(m_pPigmanSquad.size()));
 	m_pPigmanCount->getTransform()->position = glm::vec2(420.0f, 25.0f);
 	addChild(m_pPigmanCount);
@@ -911,7 +928,7 @@ void PlayScene::m_buildGrid()
 
 			for (auto obstacle : m_pObstacles)
 			{
-				if (CollisionManager::AABBCheck(path_node, obstacle))
+				if (CollisionManager::AABBCheck(path_node, obstacle->GetDetection()))
 				{
 					delete path_node;
 					path_node = nullptr;
@@ -1026,7 +1043,7 @@ void PlayScene::m_findClosestPathNodeWithoutLOS(Agent* agent)
 
 	for (auto path_node : m_pGrid)
 	{
-		if (!path_node->hasLOS() && !path_node->hasEnemyLOS())
+		if (!path_node->hasLOS())
 		{
 			const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
 			if (distance < min)

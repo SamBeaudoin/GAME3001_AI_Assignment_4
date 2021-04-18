@@ -21,6 +21,7 @@ Enemy::Enemy() : Agent()
 	setCurrentDirection(glm::vec2(-1.0f, 0.0f)); // facing left
 	m_turnRate = 5.0f; // 5 degrees per frame
 	m_health = 4;
+	m_detectRect = nullptr;
 
 	setLOSDistance(300.0f); // 5 ppf x 80 feet
 	setLOSColour(glm::vec4(1, 0, 0, 1));
@@ -43,7 +44,7 @@ void Enemy::draw()
 		// draw radius circle
 		Util::DrawCircle({ (getTransform()->position.x - 5),(getTransform()->position.y - 5) }, getLOSDistance(), glm::vec4(255, 105, 180, 255), SYMMETRICAL);
 
-		SDL_Rect colliderBoundry = { getTransform()->position.x - 35, getTransform()->position.y - 35, getWidth(), getHeight() };
+		SDL_Rect colliderBoundry = { getTransform()->position.x - getWidth()/2, getTransform()->position.y - getHeight()/2, getWidth(), getHeight() };
 		SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 0, 0, 0, 255);
 		SDL_RenderDrawRect(Renderer::Instance()->getRenderer(), &colliderBoundry);
 	}
@@ -88,6 +89,11 @@ int Enemy::getAttackRange()
 	return m_attackRange;
 }
 
+DetectRect* Enemy::getDetectRect()
+{
+	return m_detectRect;
+}
+
 void Enemy::setStevePosition(glm::vec2 position)
 {
 	m_stevePosition = position;
@@ -96,6 +102,11 @@ void Enemy::setStevePosition(glm::vec2 position)
 void Enemy::setTargetPosition(glm::vec2 position)
 {
 	m_targetPosition = position;
+}
+
+void Enemy::setDetectRect(DetectRect* rect)
+{
+	m_detectRect = rect;
 }
 
 void Enemy::takeDamage()
@@ -112,6 +123,31 @@ void Enemy::MakeDecision()
 void Enemy::move(glm::vec2 destination, float currentRotation)
 {
 	auto agent = m_decisionTree->getAgent();
+
+	if (getDetectRect() != nullptr) {
+		switch (getDetectRect()->getCollidingSide(agent))
+		{
+		case TOP_SIDE:
+			std::cout << "TOP SIDE" << std::endl;
+			destination.y = std::min(agent->getTransform()->position.y, destination.y);
+			break;
+		case BOTTOM_SIDE:
+			std::cout << "BOTTOM SIDE" << std::endl;
+			destination.y = std::max(agent->getTransform()->position.y, destination.y);
+			break;
+		case LEFT_SIDE:
+			std::cout << "LEFT SIDE" << std::endl;
+			destination.x = std::min(agent->getTransform()->position.x, destination.x);
+			break;
+		case RIGHT_SIDE:
+			std::cout << "RIGHT SIDE" << std::endl;
+			destination.x = std::max(agent->getTransform()->position.x, destination.x);
+			break;
+		default:
+			std::cout << "NO SIDE" << std::endl;
+			break;
+		}
+	}
 
 	auto direction = turn(destination, currentRotation);
 

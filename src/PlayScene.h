@@ -65,6 +65,7 @@ private:
 	WinMenu* m_pWinMenu;
 	Background* m_pBackground;
 
+	bool m_debugIsOn;
 	bool m_debugToggle;
 	bool m_zombieWalkToggle;
 	bool m_pigmanWalkToggle;

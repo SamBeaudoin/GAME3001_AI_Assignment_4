@@ -15,7 +15,7 @@ MoveToCoverAction::~MoveToCoverAction()
 
 void MoveToCoverAction::Action()
 {
-	auto destination = getAgent()->getDestinationNode()->getNodeMiddle();
+	auto destination = getAgent()->getDestination();
 	auto currentRotation = getAgent()->getCurrentHeading();
 
 	static_cast<Enemy*>(getAgent())->move(destination, currentRotation);
