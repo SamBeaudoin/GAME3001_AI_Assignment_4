@@ -15,7 +15,6 @@ WinMenu::WinMenu()
 	m_pResumeButton = new Button("../Assets/textures/Restart_Button.png", "ResumeButton", RESUME_BUTTON);
 	m_pResumeButton->getTransform()->position = glm::vec2(400.0f, 320.0f);
 
-
 	m_pResumeButton->addEventListener(CLICK, [&]()-> void
 		{
 			m_Restart = true;
