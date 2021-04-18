@@ -253,6 +253,9 @@
     <ClCompile Include="..\src\GoldenNuggs.cpp">
       <Filter>Game Objects</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\DetectRect.cpp">
+      <Filter>Game Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
@@ -528,6 +531,12 @@
     <ClInclude Include="..\src\WinMenu.h" />
     <ClInclude Include="..\src\GoldenNuggs.h">
       <Filter>Game Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DetectRect.h">
+      <Filter>Game Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\CollidingSide.h">
+      <Filter>Enums</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

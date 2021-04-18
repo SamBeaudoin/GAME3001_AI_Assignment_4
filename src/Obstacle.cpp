@@ -12,6 +12,7 @@ Obstacle::Obstacle()
 	setHeight(size.y);
 
 	getTransform()->position = glm::vec2(300.0f, 300.0f);
+	m_detectRect = new DetectRect(getTransform()->position, size.x + 40, size.y + 40);
 
 	setType(OBSTACLE);
 	getRigidBody()->isColliding = false;
@@ -19,23 +20,24 @@ Obstacle::Obstacle()
 	SoundManager::Instance().load("../Assets/audio/yay.ogg", "yay", SOUND_SFX);
 }
 
-Obstacle::~Obstacle()
-= default;
+Obstacle::~Obstacle() = default;
 
 void Obstacle::draw()
 {
-	TextureManager::Instance()->draw("obstacle", 
+	TextureManager::Instance()->draw("obstacle",
 		getTransform()->position.x, getTransform()->position.y, 0, 255, true);
 
 	if (getDebugMode()) {
 		SDL_Rect colliderBoundry = { getTransform()->position.x - (getWidth() / 2), getTransform()->position.y - (getHeight() / 2), getWidth(), getHeight() };
 		SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 0, 0, 0, 255);
 		SDL_RenderDrawRect(Renderer::Instance()->getRenderer(), &colliderBoundry);
+		m_detectRect->draw();
 	}
 }
 
 void Obstacle::update()
 {
+
 }
 
 void Obstacle::clean()
@@ -50,4 +52,14 @@ bool Obstacle::getDebugMode() const
 void Obstacle::setDebugMode(bool mode)
 {
 	m_debugMode = mode;
+}
+
+DetectRect* Obstacle::GetDetection()
+{
+	return m_detectRect;
+}
+
+void Obstacle::UpdateDetection()
+{
+	m_detectRect->setPos(getTransform()->position);
 }
