@@ -38,6 +38,12 @@ void PlayScene::update()
 
 	m_pSteve->faceMouse();
 
+		if (m_pWinMenu->getWin())
+		{
+			m_pWinMenu->update();
+			return;
+		}
+
 	// For Pigman within range
 
 	for (int i = 0; i < m_pZombieArmy.size(); i++)
@@ -375,6 +381,16 @@ void PlayScene::clean()
 
 void PlayScene::handleEvents()
 {
+	if (m_pZombieArmy.size() <= 0 && m_pPigmanSquad.size() <= 0 && !m_pWinMenu->getWin() && m_enemyNeedsSpawn == true)
+	{
+		std::cout << "Win" << std::endl;
+		m_pWinMenu->setWin(true);
+	}
+	else
+	{
+		std::cout << "No Win" << std::endl;
+	}
+
 	EventManager::Instance().update();
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_ESCAPE))
@@ -689,6 +705,10 @@ void PlayScene::start()
 	m_pPigmanCount->setText("Pigman Count: " + std::to_string(m_pPigmanSquad.size()));
 	m_pPigmanCount->getTransform()->position = glm::vec2(420.0f, 25.0f);
 	addChild(m_pPigmanCount);
+
+	//Win Menu
+	m_pWinMenu = new WinMenu();
+	addChild(m_pWinMenu);
 }
 
 void PlayScene::GUI_Function() 

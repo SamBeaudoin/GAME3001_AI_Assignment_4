@@ -17,6 +17,7 @@
 #include "Arrow.h"
 #include "Background.h"
 #include "PathNode.h"
+#include "WinMenu.h"
 #include "DestroyableObstacle.h"
 
 class PlayScene : public Scene
@@ -59,6 +60,7 @@ private:
 	Label* m_pHealth;
 	Label* m_pZombieCount;
 	Label* m_pPigmanCount;
+	WinMenu* m_pWinMenu;
 	Background* m_pBackground;
 
 	bool m_debugToggle;

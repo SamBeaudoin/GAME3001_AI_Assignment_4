@@ -218,6 +218,7 @@
     <ClCompile Include="..\src\TextureManager.cpp" />
     <ClCompile Include="..\src\Util.cpp" />
     <ClCompile Include="..\src\WaitBehindCoverAction.cpp" />
+    <ClCompile Include="..\src\WinMenu.cpp" />
     <ClCompile Include="..\src\WithinRangeCondition.cpp" />
     <ClCompile Include="..\src\Zombie.cpp" />
   </ItemGroup>
@@ -307,6 +308,7 @@
     <ClInclude Include="..\src\Transform.h" />
     <ClInclude Include="..\src\Util.h" />
     <ClInclude Include="..\src\WaitBehindCoverAction.h" />
+    <ClInclude Include="..\src\WinMenu.h" />
     <ClInclude Include="..\src\WithinRangeCondition.h" />
     <ClInclude Include="..\src\Zombie.h" />
     <ClInclude Include="..\src\ZombieState.h" />
