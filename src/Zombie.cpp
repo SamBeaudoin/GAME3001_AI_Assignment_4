@@ -76,6 +76,7 @@ void Zombie::update()
 	}
 
 	Enemy::update();
+	m_decisionTree->Update();
 }
 
 void Zombie::clean()

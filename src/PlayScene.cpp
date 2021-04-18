@@ -41,14 +41,13 @@ void PlayScene::update()
 	// Steve Facing
 	m_pSteve->faceMouse();
 
-		if (m_pWinMenu->getWin())
-		{
-			m_pWinMenu->update();
-			return;
-		}
-
+	if (m_pWinMenu->getWin())
+	{
+		m_pWinMenu->update();
+		return;
+	}
+	
 	// For Pigman within range
-
 	for (int i = 0; i < m_pZombieArmy.size(); i++)
 	{
 		//update LOS for zombies and make a decision
@@ -290,7 +289,59 @@ void PlayScene::update()
 			pigman->setisSteveTooClose(false);
 	}
 
-	// enemy off screen deletion
+	// Generate Phat Nuggies
+	for (auto pigman : m_pPigmanSquad)
+	{
+		if (pigman->getState() == PIGMAN_ATTACK && pigman->getNuggCooldown() <= 0)
+		{
+			pigman->startNuggCooldown();
+			GoldenNugg* newNugg = new GoldenNugg(pigman->getTransform()->position, pigman->getCurrentHeading());
+			m_pGoldenNuggies.push_back(newNugg);
+			addChild(newNugg);
+			newNugg = nullptr;
+			SoundManager::Instance().playSound("shoot");
+		}
+	}
+
+	// Nuggies deletion
+	for (int i = 0; i < m_pGoldenNuggies.size(); i++)
+	{
+		if (m_pGoldenNuggies[i]->getTransform()->position.y <= -100 || m_pGoldenNuggies[i]->getTransform()->position.y >= 700 ||
+			m_pGoldenNuggies[i]->getTransform()->position.x <= -100 || m_pGoldenNuggies[i]->getTransform()->position.y >= 900)
+		{
+			removeChild(m_pGoldenNuggies[i]);
+			m_pGoldenNuggies[i] = nullptr;
+			m_pGoldenNuggies.erase(m_pGoldenNuggies.begin() + i);
+			m_pGoldenNuggies.shrink_to_fit();
+		}
+	}
+	for (auto obstackle : m_pObstacles)
+	{
+		for (int i = 0; i < m_pGoldenNuggies.size(); i++)
+		{
+			if (CollisionManager::AABBCheck(obstackle, m_pGoldenNuggies[i]))
+			{
+				removeChild(m_pGoldenNuggies[i]);
+				m_pGoldenNuggies[i] = nullptr;
+				m_pGoldenNuggies.erase(m_pGoldenNuggies.begin() + i);
+				m_pGoldenNuggies.shrink_to_fit();
+				break;
+			}
+		}
+	}
+	for (int i = 0; i < m_pGoldenNuggies.size(); i++)
+	{
+		if (CollisionManager::AABBCheck(m_pSteve, m_pGoldenNuggies[i]))
+		{
+			removeChild(m_pGoldenNuggies[i]);
+			m_pGoldenNuggies[i] = nullptr;
+			m_pGoldenNuggies.erase(m_pGoldenNuggies.begin() + i);
+			m_pGoldenNuggies.shrink_to_fit();
+			m_pSteve->m_takeDamage();
+		}
+	}
+
+	// Zombie off screen deletion
 	for (int i = 0; i < m_pZombieArmy.size(); i++)
 	{
 		if (m_pZombieArmy[i]->getTransform()->position.y <= -100)

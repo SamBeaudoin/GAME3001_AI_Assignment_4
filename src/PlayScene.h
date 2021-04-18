@@ -15,6 +15,7 @@
 #include "Pigman.h"
 #include "MapNodes.h"
 #include "Arrow.h"
+#include "GoldenNuggs.h"
 #include "Background.h"
 #include "PathNode.h"
 #include "WinMenu.h"
@@ -51,6 +52,7 @@ private:
 	DestroyableObstacle* m_pDestroyable;
 	std::vector<MapNodes*> m_pMapNodes;
 	std::vector<Arrow*> m_pArrowQuiver;
+	std::vector<GoldenNugg*> m_pGoldenNuggies;
 	std::vector<DisplayObject*> m_pLOSDisplayObjects;
 	std::vector<Enemy*> m_pGangOfEnemies;
 	void m_CheckForLOS(Agent* first_object, DisplayObject* target_object);

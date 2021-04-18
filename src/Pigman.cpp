@@ -84,8 +84,9 @@ void Pigman::update()
 		}
 	}
 
-	if (m_hideCooldown > 0) m_hideCooldown--;
+	//if (m_hideCooldown > 0) m_hideCooldown--;  // This is being called by UpdateHideCooldown()
 	if (m_hideCooldown <= 0) { setIsHideCooldownRunning(false); }
+	if (m_nuggCooldown > 0) { m_nuggCooldown--; }
 
 	Enemy::update();
 	m_decisionTree->Update();
@@ -116,6 +117,11 @@ int Pigman::getHideCooldown() const
 	return m_hideCooldown;
 }
 
+int Pigman::getNuggCooldown() const
+{
+	return m_nuggCooldown;
+}
+
 void Pigman::setState(PigmanState state)
 {
 	m_state = state;
@@ -129,6 +135,11 @@ void Pigman::startHideCooldown()
 void Pigman::UpdateHideCooldown()
 {
 	m_hideCooldown--;
+}
+
+void Pigman::startNuggCooldown()
+{
+	m_nuggCooldown = 300;
 }
 
 void Pigman::resetCooldown()
