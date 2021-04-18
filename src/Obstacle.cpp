@@ -3,28 +3,29 @@
 #include "SoundManager.h"
 #include "TextureManager.h"
 
-Obstacle::Obstacle()
+Obstacle::Obstacle(glm::vec2 pos, std::string sprite)
 {
 	TextureManager::Instance()->load("../Assets/sprites/MineCraft_Bush.png", "obstacle");
+	TextureManager::Instance()->load("../Assets/sprites/Cracked_Bricks.png", "bricks");
 
-	auto size = TextureManager::Instance()->getTextureSize("obstacle");
+	m_sprite = sprite;
+
+	auto size = TextureManager::Instance()->getTextureSize(sprite);
 	setWidth(size.x);
 	setHeight(size.y);
 
-	getTransform()->position = glm::vec2(300.0f, 300.0f);
-	m_detectRect = new DetectRect(getTransform()->position, size.x + 40, size.y + 40);
+	getTransform()->position = pos;
+	m_detectRect = new DetectRect(getTransform()->position, size.x + 60, size.y + 60);
 
 	setType(OBSTACLE);
 	getRigidBody()->isColliding = false;
-
-	SoundManager::Instance().load("../Assets/audio/yay.ogg", "yay", SOUND_SFX);
 }
 
 Obstacle::~Obstacle() = default;
 
 void Obstacle::draw()
 {
-	TextureManager::Instance()->draw("obstacle",
+	TextureManager::Instance()->draw(m_sprite,
 		getTransform()->position.x, getTransform()->position.y, 0, 255, true);
 
 	if (getDebugMode()) {

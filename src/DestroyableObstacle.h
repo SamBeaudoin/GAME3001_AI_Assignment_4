@@ -7,7 +7,7 @@ class DestroyableObstacle : public Obstacle
 {
 public:
 	// constructors
-	DestroyableObstacle();
+	DestroyableObstacle(glm::vec2 pos);
 
 	// destructor
 	~DestroyableObstacle();
