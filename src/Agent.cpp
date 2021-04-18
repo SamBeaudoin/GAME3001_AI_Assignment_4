@@ -87,6 +87,11 @@ bool Agent::getIsHideCooldownRunning() const
 	return m_isHideCooldownRunning;
 }
 
+bool Agent::getIsSteveTooClose() const
+{
+	return m_SteveTooClose;
+}
+
 MapNodes* Agent::getDestinationNode() const
 {
 	return m_destinationNode;
@@ -186,6 +191,11 @@ void Agent::setIsWithinAttackRange(bool state)
 void Agent::setIsHideCooldownRunning(bool state)
 {
 	m_isHideCooldownRunning = state;
+}
+
+void Agent::setisSteveTooClose(bool state)
+{
+	m_SteveTooClose = state;
 }
 
 //void Agent::MakeDecision()
