@@ -36,6 +36,7 @@ public:
 	bool getIsWithinHealthThreshold() const;
 	bool getIsWithinAttackRange() const;
 	bool getIsHideCooldownRunning() const;
+	bool getIsSteveTooClose() const;
 
 	MapNodes* getDestinationNode() const;
 	std::vector<MapNodes*> getNodes() const;
@@ -60,6 +61,8 @@ public:
 	void setIsWithinHealthThreshold(bool state);
 	void setIsWithinAttackRange(bool state);
 	void setIsHideCooldownRunning(bool state);
+	void setisSteveTooClose(bool state);
+
 
 private:
 	void m_changeDirection();
@@ -78,6 +81,9 @@ private:
 	//Within Radius
 	bool m_isWithinRadius;
 	float m_radiusDistance;
+
+	// Steve Too Close Check
+	bool m_SteveTooClose;
 
 	// Health Check
 	bool m_isWithinHealthRange;

@@ -26,7 +26,8 @@ PathNode::~PathNode()
 void PathNode::draw()
 {
 	// draw node
-	Util::DrawRect(getTransform()->position - glm::vec2(5, 5), getWidth(), getHeight(), getLOSColour());
+	if (getDebugMode())
+		Util::DrawRect(getTransform()->position - glm::vec2(5, 5), getWidth(), getHeight(), getLOSColour());
 }
 
 void PathNode::update()
