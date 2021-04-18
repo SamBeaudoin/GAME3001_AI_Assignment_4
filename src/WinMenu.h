@@ -15,10 +15,14 @@ public:
 	void update() override;
 	void clean() override;
 
-	void setWin(bool paused);
+	void setWin(bool win);
 	bool getWin() const;
+
+	void setRestart(bool restart);
+	bool getRestart() const;
 private:
-	bool m_paused = false;
+	bool m_win = false;
+	bool m_Restart = false;
 
 	Button* m_pResumeButton;
 	Button* m_pExitButton;

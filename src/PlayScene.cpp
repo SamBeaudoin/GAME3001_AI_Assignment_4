@@ -434,6 +434,10 @@ void PlayScene::update()
 	{
 		// insert label display and restart button and refreshing of scene
 	}
+
+	// Activate Lose Scene
+	if (m_pSteve->getHealth() <= 0)
+		TheGame::Instance()->changeSceneState(END_SCENE);
 }
 
 void PlayScene::updateCollisions()
@@ -448,6 +452,13 @@ void PlayScene::updateCollisions()
 				enemy->setDetectRect(obstacle->GetDetection());
 		}
 	}
+	if (m_pDestroyable != nullptr)
+	{
+		for (auto enemy : m_pGangOfEnemies)
+			CollisionManager::AABBCheck(enemy, m_pDestroyable);
+
+		CollisionManager::AABBCheck(m_pSteve, m_pDestroyable);
+	}
 }
 
 void PlayScene::clean()
@@ -457,14 +468,18 @@ void PlayScene::clean()
 
 void PlayScene::handleEvents()
 {
-	if (m_pZombieArmy.size() <= 0 && m_pPigmanSquad.size() <= 0 && !m_pWinMenu->getWin() && m_enemyNeedsSpawn == true)
+	
+	// Activate Win Scene
+	if (m_pZombieArmy.size() <= 0 && m_pPigmanSquad.size() <= 0 && m_enemyNeedsSpawn == false)
 	{
+		//std::cout << "Not a Win" << std::endl;
 		std::cout << "Win" << std::endl;
 		m_pWinMenu->setWin(true);
 	}
-	else
+
+	if (m_pWinMenu->getRestart())
 	{
-		std::cout << "No Win" << std::endl;
+		TheGame::Instance()->changeSceneState(START_SCENE);
 	}
 
 	EventManager::Instance().update();
@@ -489,7 +504,7 @@ void PlayScene::handleEvents()
 	{
 		if (!m_zombieWalkToggle) {
 			m_zombieWalkToggle = true;
-			
+
 			for (auto zombie : m_pZombieArmy)
 				static_cast<Zombie*>(zombie)->setState(static_cast<Zombie*>(zombie)->getState() == ZOMBIE_IDLE ? ZOMBIE_WALK : ZOMBIE_IDLE);
 		}
@@ -508,12 +523,12 @@ void PlayScene::handleEvents()
 		if (m_pigmanWalkToggle)
 			m_pigmanWalkToggle = false;
 	}
-	
-	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_K))
+
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_K))
 	{
 		// Debug key
 		// All enemies take damage
-		
+
 		for (int i = 0; i < m_pZombieArmy.size(); i++)
 		{
 			if (static_cast<Zombie*>(m_pZombieArmy[i])->getState() != ZOMBIE_DAMAGED)
@@ -729,7 +744,7 @@ void PlayScene::start()
 		addChild(nodes);
 
 	// add Zombies and set their paths
-	Zombie* zomb = new Zombie();
+	/*Zombie* zomb = new Zombie();
 	zomb->getTransform()->position = m_pMapNodes[6]->getNodeMiddle();
 	zomb->AddNode(m_pMapNodes[6]);
 	zomb->AddNode(m_pMapNodes[3]);
@@ -737,9 +752,9 @@ void PlayScene::start()
 	zomb->AddNode(m_pMapNodes[0]);
 	addChild(zomb);
 	m_pZombieArmy.push_back(zomb);
-	m_pGangOfEnemies.push_back(zomb);
+	m_pGangOfEnemies.push_back(zomb);*/
 
-	zomb = new Zombie();
+	Zombie* zomb = new Zombie();
 	zomb->getTransform()->position = m_pMapNodes[8]->getNodeMiddle();
 	addChild(zomb);
 	zomb->AddNode(m_pMapNodes[8]);
@@ -760,7 +775,7 @@ void PlayScene::start()
 	m_pPigmanSquad.push_back(pig);
 	m_pGangOfEnemies.push_back(pig);
 
-	pig = new Pigman();
+	/*pig = new Pigman();
 	pig->getTransform()->position = m_pMapNodes[5]->getNodeMiddle();
 	addChild(pig);
 	pig->AddNode(m_pMapNodes[5]);
@@ -768,19 +783,19 @@ void PlayScene::start()
 	pig->setDestinationNode(m_pMapNodes[2]);
 	pig->AddNode(m_pMapNodes[8]);
 	m_pPigmanSquad.push_back(pig);
-	m_pGangOfEnemies.push_back(pig);
+	m_pGangOfEnemies.push_back(pig);*/
 
 	//Labels
 	m_pHealth = new Label("Current HP: ", "Minecraft", 30);
 	m_pHealth->getTransform()->position = glm::vec2(95.0f, 25.0f);
 	addChild(m_pHealth);
 
-	m_pZombieCount = new Label("", "Minecraft", 27);
+	m_pZombieCount = new Label("", "Minecraft", 30);
 	m_pZombieCount->setText("Zombie Count: " + std::to_string(m_pZombieArmy.size()));
 	m_pZombieCount->getTransform()->position = glm::vec2(675.0f, 25.0f);
 	addChild(m_pZombieCount);
 
-	m_pPigmanCount = new Label("", "Minecraft", 27);
+	m_pPigmanCount = new Label("", "Minecraft", 30);
 	m_pPigmanCount->setText("Pigman Count: " + std::to_string(m_pPigmanSquad.size()));
 	m_pPigmanCount->getTransform()->position = glm::vec2(420.0f, 25.0f);
 	addChild(m_pPigmanCount);
