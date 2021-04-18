@@ -445,8 +445,12 @@ void PlayScene::updateCollisions()
 	for (auto obstacle : m_pObstacles) {
 		CollisionManager::AABBCheck(m_pSteve, obstacle);
 
-		for (auto enemy : m_pGangOfEnemies)
+		for (auto enemy : m_pGangOfEnemies) {
 			CollisionManager::AABBCheck(enemy, obstacle);
+
+			if (CollisionManager::AABBCheck(enemy, obstacle->GetDetection()))
+				enemy->setDetectRect(obstacle->GetDetection());
+		}
 	}
 	if (m_pDestroyable != nullptr)
 	{
@@ -726,15 +730,15 @@ void PlayScene::start()
 	m_buildGrid();
 
 	//nodes for navigation
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(55.0f,50.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(55.0f,250.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(55.0f,485.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(350.0f,50.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(350.0f,250.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(350.0f,485.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(675.0f,50.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(675.0f,250.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(675.0f,485.0f)));
+	m_pMapNodes.push_back(new MapNodes(glm::vec2(30.0f, 50.0f)));
+	m_pMapNodes.push_back(new MapNodes(glm::vec2(30.0f, 300.0f)));
+	m_pMapNodes.push_back(new MapNodes(glm::vec2(30.0f, 550.0f)));
+	m_pMapNodes.push_back(new MapNodes(glm::vec2(350.0f, 50.0f)));
+	m_pMapNodes.push_back(new MapNodes(glm::vec2(350.0f, 300.0f)));
+	m_pMapNodes.push_back(new MapNodes(glm::vec2(350.0f, 550.0f)));
+	m_pMapNodes.push_back(new MapNodes(glm::vec2(750.0f, 50.0f)));
+	m_pMapNodes.push_back(new MapNodes(glm::vec2(750.0f, 300.0f)));
+	m_pMapNodes.push_back(new MapNodes(glm::vec2(750.0f, 550.0f)));
 
 	for (auto nodes : m_pMapNodes)
 		addChild(nodes);

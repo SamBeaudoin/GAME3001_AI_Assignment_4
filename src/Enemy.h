@@ -3,6 +3,7 @@
 #define __ENEMY_H__
 #include "Agent.h"
 #include "DecisionTree.h"
+#include "DetectRect.h"
 
 class Enemy : public Agent {
 public:
@@ -20,10 +21,12 @@ public:
 	glm::vec2 getStevePosition();
 	glm::vec2 getTargetPosition();
 	int getAttackRange();
+	DetectRect* getDetectRect();
 
 	// setters
 	void setStevePosition(glm::vec2 position);
 	void setTargetPosition(glm::vec2 position);
+	void setDetectRect(DetectRect* rect);
 
 	void takeDamage();
 	void MakeDecision();
@@ -44,6 +47,7 @@ private:
 protected:
 	DecisionTree* m_decisionTree;
 	int m_attackRange;
+	DetectRect* m_detectRect;
 };
 
 #endif // !__ENEMY_H__

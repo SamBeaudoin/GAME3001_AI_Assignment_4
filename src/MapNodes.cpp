@@ -6,10 +6,10 @@ MapNodes::MapNodes(){}
 MapNodes::MapNodes(glm::vec2 pos)
 {
 	getTransform()->position = pos;
-	setHeight(64);
-	setWidth(64);
+	setHeight(40);
+	setWidth(40);
 	setType(MAP_NODE);
-	m_middleOfNode = { getTransform()->position.x + 32, getTransform()->position.y + 32 };
+	m_middleOfNode = { getTransform()->position.x + 20, getTransform()->position.y + 20};
 }
 
 

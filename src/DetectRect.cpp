@@ -57,6 +57,7 @@ void DetectRect::setPos(glm::vec2 pos)
 CollidingSide DetectRect::getCollidingSide(DisplayObject* object)
 {
 	const auto position = object->getTransform()->position - glm::vec2(object->getWidth() / 2, object->getHeight() / 2);
+	//const auto obstacle = getObstacle()->getTransform()->position = glm::vec2(getObstacle()->getWidth() / 2, getObstacle()->getHeight() / 2);
 	const auto detection = getTransform()->position - glm::vec2(getWidth() / 2, getHeight() /2);
 
 	if (position.x < (detection.x + getWidth()) && position.x > (detection.x) && position.y > detection.y)
@@ -69,4 +70,3 @@ CollidingSide DetectRect::getCollidingSide(DisplayObject* object)
 		return LEFT_SIDE;
 	return NO_SIDE;
 }
-
