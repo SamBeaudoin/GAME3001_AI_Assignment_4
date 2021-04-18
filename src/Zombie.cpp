@@ -12,8 +12,8 @@ Zombie::Zombie() : Enemy()
 
 	m_buildAnimations();
 
-	setWidth(62);
-	setHeight(62);
+	setWidth(40);
+	setHeight(40);
 
 	m_decisionTree = new CloseCombatDecisionTree();
 	m_decisionTree->setAgent(this);
@@ -43,7 +43,7 @@ void Zombie::draw()
 		TextureManager::Instance()->playAnimation("zombie", getAnimation("walk"), x, y, 1.1f, getCurrentHeading(), 255, true);
 		break;
 	case ZOMBIE_DEATH:
-		TextureManager::Instance()->playAnimation("zombie", getAnimation("death"), x, y, 1.1f, getCurrentHeading(), 255, true);
+		TextureManager::Instance()->playAnimation("zombie", getAnimation("death"), x, y, 0.9f, getCurrentHeading(), 255, true);
 		break;
 	case ZOMBIE_DAMAGED:
 		TextureManager::Instance()->playAnimation("zombie", getAnimation("damage"), x, y, 0.5f, getCurrentHeading(), 255, true);

@@ -61,7 +61,7 @@ void Steve::draw()
 
 	if (getDebugMode())
 	{
-		SDL_Rect colliderBoundry = { getTransform()->position.x-22, getTransform()->position.y-5, getWidth(), getHeight() };
+		SDL_Rect colliderBoundry = { getTransform()->position.x - getWidth()/2, getTransform()->position.y - getHeight()/2, getWidth(), getHeight() };
 		SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 0, 0, 0, 255);
 		SDL_RenderDrawRect(Renderer::Instance()->getRenderer(), &colliderBoundry);
 

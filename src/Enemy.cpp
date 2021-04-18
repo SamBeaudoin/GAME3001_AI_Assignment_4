@@ -44,7 +44,7 @@ void Enemy::draw()
 		// draw radius circle
 		Util::DrawCircle({ (getTransform()->position.x - 5),(getTransform()->position.y - 5) }, getLOSDistance(), glm::vec4(255, 105, 180, 255), SYMMETRICAL);
 
-		SDL_Rect colliderBoundry = { getTransform()->position.x - 35, getTransform()->position.y - 35, getWidth(), getHeight() };
+		SDL_Rect colliderBoundry = { getTransform()->position.x - getWidth()/2, getTransform()->position.y - getHeight()/2, getWidth(), getHeight() };
 		SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 0, 0, 0, 255);
 		SDL_RenderDrawRect(Renderer::Instance()->getRenderer(), &colliderBoundry);
 	}

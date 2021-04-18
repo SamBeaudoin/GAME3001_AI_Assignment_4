@@ -12,8 +12,8 @@ Pigman::Pigman() : Enemy()
 
 	m_buildAnimations();
 
-	setWidth(64);
-	setHeight(64);
+	setWidth(40);
+	setHeight(40);
 
 	m_hideCooldown = 0;
 
@@ -45,13 +45,13 @@ void Pigman::draw()
 		TextureManager::Instance()->playAnimation("pigman", getAnimation("walk"), x, y, 1.1f, getCurrentHeading(), 255, true);
 		break;
 	case PIGMAN_DEATH:
-		TextureManager::Instance()->playAnimation("pigman", getAnimation("death"), x, y, 1.1f, getCurrentHeading(), 255, true);
+		TextureManager::Instance()->playAnimation("pigman", getAnimation("death"), x, y, 0.9f, getCurrentHeading(), 255, true);
 		break;
 	case PIGMAN_DAMAGED:
 		TextureManager::Instance()->playAnimation("pigman", getAnimation("damage"), x, y, 0.5f, getCurrentHeading(), 255, true);
 		break;
 	case PIGMAN_ATTACK:
-		TextureManager::Instance()->playAnimation("pigman", getAnimation("attack"), x, y, 1.0f, getCurrentHeading(), 255, true);
+		TextureManager::Instance()->playAnimation("pigman", getAnimation("attack"), x, y, 0.1f, getCurrentHeading(), 255, true);
 		break;
 	}
 
