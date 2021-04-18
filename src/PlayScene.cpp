@@ -243,9 +243,10 @@ void PlayScene::update()
 		}
 	}
 
+	// Range checks for all enemies
 	for (auto enemy : m_pGangOfEnemies)
 	{
-		if (Util::distance(m_pSteve->getTransform()->position, enemy->getTransform()->position) < enemy->getLOSDistance() && !enemy->hasLOS())
+		if (Util::distance(m_pSteve->getTransform()->position, enemy->getTransform()->position) < enemy->getLOSDistance())
 		{
 			if (enemy->hasLOS())
 				enemy->setStevePosition(m_pSteve->getTransform()->position);
@@ -256,6 +257,7 @@ void PlayScene::update()
 		if (Util::distance(m_pSteve->getTransform()->position, enemy->getTransform()->position) < enemy->getAttackRange() && enemy->hasLOS()) {
 			enemy->setIsWithinAttackRange(true);
 		}
+
 		else {
 			enemy->setIsWithinAttackRange(false);
 		}
@@ -264,6 +266,12 @@ void PlayScene::update()
 	for (auto pigman : m_pPigmanSquad) {
 		if (pigman->getIsHideCooldownRunning())
 			m_findClosestPathNodeWithoutLOS(pigman);
+
+		// Distance Check
+		if (Util::distance(pigman->getTransform()->position, m_pSteve->getTransform()->position) < 100)
+			pigman->setisSteveTooClose(true);
+		else
+			pigman->setisSteveTooClose(false);
 	}
 
 	// enemy off screen deletion
@@ -454,8 +462,8 @@ void PlayScene::handleEvents()
 		{
 			if (static_cast<Pigman*>(m_pPigmanSquad[i])->getState() != PIGMAN_DAMAGED)
 			{
-
 				m_pPigmanSquad[i]->takeDamage();
+				m_pPigmanSquad[i]->startHideCooldown();
 
 				if (m_pPigmanSquad[i]->getHealth() <= 0) {
 					SoundManager::Instance().playSound("pigmanDeath");

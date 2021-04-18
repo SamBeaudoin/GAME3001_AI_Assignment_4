@@ -8,6 +8,7 @@
 #include "RangedCombatCondition.h"
 #include "HideCooldownCondition.h"
 #include "WithinRangeCondition.h"
+#include "SteveTooCloseCondition.h"
 
 
 class RangedCombatDecisionTree : public DecisionTree
@@ -25,6 +26,7 @@ private:
 	HealthCheckCondition* m_HealthNode;
 	HideCooldownCondition* m_HideCooldownNode;
 	WithinRangeCondition* m_WithinRangeNode;
+	SteveTooCloseCondition* m_SteveTooCloseNode;
 
 	virtual void m_buildTree();
 };

@@ -1,21 +1,27 @@
-#include "MoveToRangeAction.h"
+#include "CreateSpaceAction.h"
 #include "Util.h"
-#include "SoundManager.h"
+#include <iostream>
 #include "Enemy.h"
+#include "Zombie.h"
 #include "Pigman.h"
 
-MoveToRangeAction::MoveToRangeAction()
+CreateSpaceAction::CreateSpaceAction()
 {
-	name = "Move To Range Action";
+	name = "Create Space Action";
 }
 
-MoveToRangeAction::~MoveToRangeAction()
+CreateSpaceAction::~CreateSpaceAction()
 = default;
 
-void MoveToRangeAction::Action()
+void CreateSpaceAction::Action()
 {
-	auto destination = static_cast<Enemy*>(getAgent())->getStevePosition() + glm::vec2(20.0f, 20.0f);
+	auto destination = getAgent()->getTransform()->position;
 	auto currentRotation = getAgent()->getCurrentHeading();
+
+	if (destination.y >= 300)
+		destination.y = 700;
+	else
+		destination.y = -100;
 
 	static_cast<Enemy*>(getAgent())->move(destination, currentRotation);
 

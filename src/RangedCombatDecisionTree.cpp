@@ -6,6 +6,7 @@
 #include "FleeAction.h"
 #include "MoveToCoverAction.h"
 #include "WaitBehindCoverAction.h"
+#include "CreateSpaceAction.h"
 #include <iostream>
 
 RangedCombatDecisionTree::RangedCombatDecisionTree() : DecisionTree()
@@ -24,6 +25,7 @@ void RangedCombatDecisionTree::Update()
     m_WithinRangeNode->setIsWithinRange(m_pAgent->getIsWithinAttackRange());
     m_HideCooldownNode->setIsCooldownRunning(m_pAgent->getIsHideCooldownRunning());
     m_LOSFleeNode->setLOS(m_pAgent->hasLOS());
+	m_SteveTooCloseNode->setIsTooClose(m_pAgent->getIsSteveTooClose());
 }
 
 void RangedCombatDecisionTree::m_buildTree()
@@ -70,6 +72,15 @@ void RangedCombatDecisionTree::m_buildTree()
 	AddNode(m_LOSSearchNode, m_WithinRangeNode, RIGHT_TREE_NODE);
 	m_treeNodeList.push_back(m_WithinRangeNode);
 
+	m_SteveTooCloseNode = new SteveTooCloseCondition();
+	m_SteveTooCloseNode->setNodeType(CONDITION_NODE);
+	AddNode(m_WithinRangeNode, m_SteveTooCloseNode, RIGHT_TREE_NODE);
+	m_treeNodeList.push_back(m_SteveTooCloseNode);
+
+	TreeNode* createSpaceNode = AddNode(m_SteveTooCloseNode, new CreateSpaceAction(), RIGHT_TREE_NODE);
+	createSpaceNode->setNodeType(ACTION_NODE);
+	m_treeNodeList.push_back(createSpaceNode);
+
 	TreeNode* patrolNode = AddNode(m_RadiusNode, new PatrolAction(), LEFT_TREE_NODE);
 	patrolNode->setNodeType(ACTION_NODE);
 	m_treeNodeList.push_back(patrolNode);
@@ -82,7 +93,7 @@ void RangedCombatDecisionTree::m_buildTree()
 	moveToRange->setNodeType(ACTION_NODE);
 	m_treeNodeList.push_back(moveToRange);
 
-	TreeNode* rangeAttack = AddNode(m_WithinRangeNode, new RangedAttackAction(), RIGHT_TREE_NODE);
+	TreeNode* rangeAttack = AddNode(m_SteveTooCloseNode, new RangedAttackAction(), LEFT_TREE_NODE);
 	rangeAttack->setNodeType(ACTION_NODE);
 	m_treeNodeList.push_back(rangeAttack);
 }

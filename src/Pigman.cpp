@@ -84,7 +84,7 @@ void Pigman::update()
 		}
 	}
 
-	m_hideCooldown--;
+	if (m_hideCooldown > 0) m_hideCooldown--;
 	if (m_hideCooldown <= 0) { setIsHideCooldownRunning(false); }
 
 	Enemy::update();
@@ -123,7 +123,7 @@ void Pigman::setState(PigmanState state)
 
 void Pigman::startHideCooldown()
 {
-	m_hideCooldown = 120;
+	m_hideCooldown = 300;
 }
 
 void Pigman::UpdateHideCooldown()
