@@ -684,12 +684,14 @@ void PlayScene::start()
 	//m_pObstacles.push_back(new Tree(glm::vec2(350.0f, -50.0f)));
 	//m_pObstacles.push_back(new Tree(glm::vec2(550.0f, -50.0f)));
 	//m_pObstacles.push_back(new Tree(glm::vec2(750.0f, -50.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, 150.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(850.0f, 150.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, 350.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(850.0f, 350.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, 550.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(850.0f, 550.0f)));
+
+	//m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, 150.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(850.0f, 150.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, 350.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(850.0f, 350.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, 550.0f)));
+	//m_pObstacles.push_back(new Tree(glm::vec2(850.0f, 550.0f)));
+
 	//m_pObstacles.push_back(new Tree(glm::vec2(150.0f, 650.0f)));
 	//m_pObstacles.push_back(new Tree(glm::vec2(350.0f, 650.0f)));
 	//m_pObstacles.push_back(new Tree(glm::vec2(550.0f, 650.0f)));
@@ -702,6 +704,7 @@ void PlayScene::start()
 	m_pObstacles.push_back(new Tree(glm::vec2(585.0f, 335.0f)));
 	
 	for (auto obstacle : m_pObstacles) {
+		obstacle->UpdateDetection();
 		addChild(obstacle);
 		m_pLOSDisplayObjects.push_back(obstacle);
 	}
@@ -911,7 +914,7 @@ void PlayScene::m_buildGrid()
 
 			for (auto obstacle : m_pObstacles)
 			{
-				if (CollisionManager::AABBCheck(path_node, obstacle))
+				if (CollisionManager::AABBCheck(path_node, obstacle->GetDetection()))
 				{
 					delete path_node;
 					path_node = nullptr;
@@ -1026,7 +1029,7 @@ void PlayScene::m_findClosestPathNodeWithoutLOS(Agent* agent)
 
 	for (auto path_node : m_pGrid)
 	{
-		if (!path_node->hasLOS() && !path_node->hasEnemyLOS())
+		if (!path_node->hasLOS())
 		{
 			const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
 			if (distance < min)
