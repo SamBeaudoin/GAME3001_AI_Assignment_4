@@ -2,6 +2,7 @@
 #ifndef __DESTROYABLE_OBSTACLE__
 #define __DESTROYABLE_OBSTACLE__
 #include "Obstacle.h"
+#include "HealthBar.h"
 
 class DestroyableObstacle : public Obstacle
 {
@@ -24,8 +25,10 @@ public:
 	int getHealth();
 
 private:
+	virtual void m_buildAnimations();
+
 	bool m_debugMode;
-	int m_health;
+	HealthBar m_health;
 };
 
 #endif /* defined (__OBSTACLE__) */

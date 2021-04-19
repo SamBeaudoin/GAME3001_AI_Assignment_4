@@ -256,6 +256,9 @@
     <ClCompile Include="..\src\DetectRect.cpp">
       <Filter>Game Objects</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\HealthBar.cpp">
+      <Filter>Game Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
@@ -537,6 +540,9 @@
     </ClInclude>
     <ClInclude Include="..\src\CollidingSide.h">
       <Filter>Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\HealthBar.h">
+      <Filter>Game Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

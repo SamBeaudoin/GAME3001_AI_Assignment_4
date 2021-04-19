@@ -4,6 +4,7 @@
 #include "Agent.h"
 #include "DecisionTree.h"
 #include "DetectRect.h"
+#include "HealthBar.h"
 
 class Enemy : public Agent {
 public:
@@ -40,7 +41,6 @@ private:
 
 	float m_maxSpeed;
 	float m_turnRate;
-	int m_health;
 	glm::vec2 m_stevePosition;
 	glm::vec2 m_targetPosition;
 
@@ -48,6 +48,7 @@ protected:
 	DecisionTree* m_decisionTree;
 	int m_attackRange;
 	DetectRect* m_detectRect;
+	HealthBar m_health;
 };
 
 #endif // !__ENEMY_H__

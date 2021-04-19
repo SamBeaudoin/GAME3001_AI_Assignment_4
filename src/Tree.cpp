@@ -22,3 +22,7 @@ void Tree::clean()
 {
 	Obstacle::clean();
 }
+
+void Tree::m_buildAnimations()
+{
+}
