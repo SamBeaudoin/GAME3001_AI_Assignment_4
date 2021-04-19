@@ -15,6 +15,8 @@ Zombie::Zombie() : Enemy()
 	setWidth(40);
 	setHeight(40);
 
+	m_health = HealthBar(4, getTransform()->position);
+
 	m_decisionTree = new CloseCombatDecisionTree();
 	m_decisionTree->setAgent(this);
 

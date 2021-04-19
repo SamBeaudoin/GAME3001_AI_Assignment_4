@@ -1,0 +1,16 @@
+explosion0 0 0 60 60
+explosion1 60 0 60 60
+explosion2 120 0 60 60
+explosion3 180 0 60 60
+explosion4 240 0 60 60
+explosion5 300 0 60 60
+explosion6 360 0 60 60
+explosion7 420 0 60 60
+explosion8 480 0 60 60
+explosion9 540 0 60 60
+explosion10 600 0 60 60
+explosion11 660 0 60 60
+explosion12 720 0 60 60
+explosion13 780 0 60 60
+explosion14 840 0 60 60
+explosion15 900 0 60 60

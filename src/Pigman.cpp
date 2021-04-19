@@ -15,6 +15,7 @@ Pigman::Pigman() : Enemy()
 	setWidth(40);
 	setHeight(40);
 
+	m_health = HealthBar(4, getTransform()->position);
 	m_hideCooldown = 0;
 
 	m_decisionTree = new RangedCombatDecisionTree();
@@ -35,7 +36,7 @@ void Pigman::draw()
 	const auto x = getTransform()->position.x;
 	const auto y = getTransform()->position.y;
 
-	// draw quel est son nom?? Pigboi!
+	// draw piggy boi
 	switch (m_state)
 	{
 	case PIGMAN_IDLE:
@@ -80,7 +81,7 @@ void Pigman::update()
 		m_soundCooldown--;
 		if (m_soundCooldown == 0) {
 			m_soundCooldown = (rand() % 301) + 300;
-			SoundManager::Instance().playSound("zombieIdle" + std::to_string(rand() % 3));
+			SoundManager::Instance().playSound("pigmanIdle");
 		}
 	}
 
@@ -129,7 +130,7 @@ void Pigman::setState(PigmanState state)
 
 void Pigman::startHideCooldown()
 {
-	m_hideCooldown = 300;
+	m_hideCooldown = 100;
 }
 
 void Pigman::UpdateHideCooldown()
@@ -139,7 +140,7 @@ void Pigman::UpdateHideCooldown()
 
 void Pigman::startNuggCooldown()
 {
-	m_nuggCooldown = 300;
+	m_nuggCooldown = 200;
 }
 
 void Pigman::resetCooldown()

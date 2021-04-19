@@ -21,7 +21,6 @@ Enemy::Enemy() : Agent()
 	setCurrentHeading(180.0f); // current facing angle
 	setCurrentDirection(glm::vec2(-1.0f, 0.0f)); // facing left
 	m_turnRate = 5.0f; // 5 degrees per frame
-	m_health = 4;
 	m_detectRect = nullptr;
 
 	setLOSDistance(300.0f); // 5 ppf x 80 feet
@@ -50,20 +49,22 @@ void Enemy::draw()
 		SDL_RenderDrawRect(Renderer::Instance()->getRenderer(), &colliderBoundry);
 	}
 
-	SDL_Rect rect = { getTransform()->position.x - 30, getTransform()->position.y - 50, 15 * m_health, 10 };
+	m_health.draw();
+	//SDL_Rect rect = { getTransform()->position.x - 30, getTransform()->position.y - 50, 15 * m_health, 10 };
 
-	SDL_Rect outline = { getTransform()->position.x - 30, getTransform()->position.y - 50, 60, 10 };
+	//SDL_Rect outline = { getTransform()->position.x - 30, getTransform()->position.y - 50, 60, 10 };
 
-	SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 255, 0, 0, 255);
-	SDL_RenderFillRect(Renderer::Instance()->getRenderer(), &rect);
-	SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 0, 0, 0, 255);
-	SDL_RenderDrawRect(Renderer::Instance()->getRenderer(), &outline);
-	SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 255, 255, 255, 255);
+	//SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 255, 0, 0, 255);
+	//SDL_RenderFillRect(Renderer::Instance()->getRenderer(), &rect);
+	//SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 0, 0, 0, 255);
+	//SDL_RenderDrawRect(Renderer::Instance()->getRenderer(), &outline);
+	//SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 255, 255, 255, 255);
 }
 
 void Enemy::update()
 {
-	setIsWithinHealthThreshold(m_health > 1);
+	m_health.setPos(getTransform()->position);
+	setIsWithinHealthThreshold(m_health.getHealth() > 1);
 }
 
 void Enemy::clean()
@@ -72,7 +73,7 @@ void Enemy::clean()
 
 int Enemy::getHealth()
 {
-	return m_health;
+	return m_health.getHealth();
 }
 
 glm::vec2 Enemy::getStevePosition()
@@ -112,8 +113,8 @@ void Enemy::setDetectRect(DetectRect* rect)
 
 void Enemy::takeDamage()
 {
-	if (m_health > 0)
-		m_health -= 1;
+	if (m_health.getHealth() > 0)
+		m_health.takeDamage();
 }
 
 void Enemy::MakeDecision()

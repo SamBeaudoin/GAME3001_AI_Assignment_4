@@ -5,8 +5,13 @@
 
 DestroyableObstacle::DestroyableObstacle(glm::vec2 pos) : Obstacle(pos, "bricks")
 {
-	m_health = 3;
+	TextureManager::Instance()->loadSpriteSheet("../Assets/sprites/Explosion_Animations.txt", "../Assets/sprites/Explosions.png", "explosion");
+	setSpriteSheet(TextureManager::Instance()->getSpriteSheet("explosion"));
+
+	m_health = HealthBar(3, pos);
 	setType(DESTROYABLE_OBJECT);
+
+	m_buildAnimations();
 }
 
 DestroyableObstacle::~DestroyableObstacle()
@@ -14,17 +19,12 @@ DestroyableObstacle::~DestroyableObstacle()
 
 void DestroyableObstacle::draw()
 {
-	Obstacle::draw();
+	if (!m_isDestroyed)
+		Obstacle::draw();
+	else
+		TextureManager::Instance()->playAnimation("explosion", getAnimation("destroyed"), getTransform()->position.x, getTransform()->position.y, 4.0f, NULL, 255, true);
 
-	SDL_Rect rect = { getTransform()->position.x - 30, getTransform()->position.y - 50, 20 * m_health, 10 };
-
-	SDL_Rect outline = { getTransform()->position.x - 30, getTransform()->position.y - 50, 60, 10 };
-
-	SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 255, 0, 0, 255);
-	SDL_RenderFillRect(Renderer::Instance()->getRenderer(), &rect);
-	SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 0, 0, 0, 255);
-	SDL_RenderDrawRect(Renderer::Instance()->getRenderer(), &outline);
-	SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 255, 255, 255, 255);
+	m_health.draw();
 }
 
 void DestroyableObstacle::update()
@@ -49,11 +49,50 @@ void DestroyableObstacle::setDebugMode(bool mode)
 
 void DestroyableObstacle::takeDamage()
 {
-	if (m_health > 0)
-		m_health -= 1;
+	if (m_health.getHealth() > 0)
+		m_health.takeDamage();
 }
 
 int DestroyableObstacle::getHealth()
 {
-	return m_health;
+	return m_health.getHealth();
+}
+
+void DestroyableObstacle::startDespawnTimer()
+{
+	m_despawnTimer = 30;
+}
+
+void DestroyableObstacle::updateDespawnTimer()
+{
+	m_despawnTimer--;
+}
+
+int DestroyableObstacle::getDespawnTimer()
+{
+	return m_despawnTimer;
+}
+
+void DestroyableObstacle::setIsDestroyed(bool destroyed)
+{
+	m_isDestroyed = destroyed;
+
+	if (destroyed)
+		startDespawnTimer();
+}
+
+bool DestroyableObstacle::isDestroyed()
+{
+	return m_isDestroyed;
+}
+
+void DestroyableObstacle::m_buildAnimations()
+{
+	Animation destroyed = Animation();
+	destroyed.name = "destroyed";
+
+	for (int i = 0; i < 16; i++)
+		destroyed.frames.push_back(getSpriteSheet()->getFrame("explosion" + std::to_string(i)));
+
+	setAnimation(destroyed);
 }

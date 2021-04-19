@@ -1,11 +1,11 @@
 #pragma once
 #ifndef __OBSTACLE__
 #define __OBSTACLE__
-#include "DisplayObject.h"
+#include "Sprite.h"
 #include "SDL.h"
 #include "DetectRect.h"
 
-class Obstacle : public DisplayObject
+class Obstacle : public Sprite
 {
 public:
 	// constructors
@@ -30,6 +30,8 @@ protected:
 	DetectRect* m_detectRect;
 
 private:
+	virtual void m_buildAnimations() = 0;
+
 	bool m_debugMode;
 	std::string m_sprite;
 };
