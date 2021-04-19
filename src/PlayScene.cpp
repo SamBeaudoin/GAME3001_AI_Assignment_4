@@ -142,6 +142,39 @@ void PlayScene::update()
 		}
 	}
 
+	for (int i = 0; i < m_pGoldenNuggies.size(); i++)
+	{
+		for (int j = 0; j < m_pObstacles.size(); j++)
+			if (CollisionManager::AABBCheck(m_pGoldenNuggies[i], m_pObstacles[j]))
+			{
+				if (m_pObstacles[j]->getType() == DESTROYABLE_OBJECT) {
+					static_cast<DestroyableObstacle*>(m_pObstacles[j])->takeDamage();
+
+					if (static_cast<DestroyableObstacle*>(m_pObstacles[j])->getHealth() <= 0)
+					{
+						for (auto node : m_pGrid) {
+							if (CollisionManager::AABBCheck(node, m_pObstacles[j]->GetDetection())) {
+								if (!node->isEnabled())
+									node->setEnabled(true);
+							}
+						}
+
+						removeChild(m_pObstacles[j]);
+						m_pObstacles[j] = nullptr;
+						m_pObstacles.erase(m_pObstacles.begin() + j);
+						m_pObstacles.shrink_to_fit();
+					}
+				}
+
+				removeChild(m_pGoldenNuggies[i]);
+				m_pGoldenNuggies[i] = nullptr;
+				m_pGoldenNuggies.erase(m_pGoldenNuggies.begin() + i);
+				m_pGoldenNuggies.shrink_to_fit();
+
+				break;
+			}
+	}
+
 	//Delete Arrows
 	for (int i = 0; i < m_pArrowQuiver.size(); i++)
 	{
