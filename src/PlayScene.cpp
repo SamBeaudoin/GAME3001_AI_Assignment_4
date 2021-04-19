@@ -941,7 +941,7 @@ void PlayScene::m_findClosestPathNodeWithLOS(Agent* agent)
 
 	for (auto path_node : m_pGrid)
 	{
-		if (path_node->hasLOS() && path_node->hasEnemyLOS())
+		if (path_node->hasLOS() && path_node->hasEnemyLOS() && path_node->isEnabled())
 		{
 			const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
 			if (distance < min)
@@ -962,7 +962,7 @@ void PlayScene::m_findClosestPathNodeWithoutLOS(Agent* agent)
 
 	for (auto path_node : m_pGrid)
 	{
-		if (!path_node->hasLOS())
+		if (!path_node->hasLOS() && path_node->isEnabled())
 		{
 			const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
 			if (distance < min)
