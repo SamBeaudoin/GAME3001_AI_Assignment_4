@@ -31,8 +31,8 @@ public:
 	void takeDamage();
 	void MakeDecision();
 
-	void move(glm::vec2 destination, float currentRotation);
-	glm::vec2 turn(glm::vec2 destination, float currentRotation);
+	void move(glm::vec2 destination, float currentRotation, bool reverse = false);
+	glm::vec2 turn(glm::vec2 destination, float currentRotation, bool reverse = false);
 
 private:
 	void m_checkBounds();

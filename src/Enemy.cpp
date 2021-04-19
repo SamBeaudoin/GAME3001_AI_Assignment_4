@@ -6,6 +6,7 @@
 #include "Util.h"
 #include "Zombie.h"
 #include "Pigman.h"
+#include "algorithm"
 
 Enemy::Enemy() : Agent()
 {
@@ -120,7 +121,7 @@ void Enemy::MakeDecision()
 	std::cout << m_decisionTree->MakeDecision() << std::endl;
 }
 
-void Enemy::move(glm::vec2 destination, float currentRotation)
+void Enemy::move(glm::vec2 destination, float currentRotation, bool reverse)
 {
 	auto agent = m_decisionTree->getAgent();
 
@@ -149,14 +150,22 @@ void Enemy::move(glm::vec2 destination, float currentRotation)
 		}
 	}
 
-	auto direction = turn(destination, currentRotation);
+	auto direction = turn(destination, currentRotation, reverse);
 
 	//move if the agent, if they are of type Zombie (so far all of them are)
 	if ((agent->getType() == ZOMBIE && static_cast<Zombie*>(agent)->getState() != ZOMBIE_DEATH && static_cast<Zombie*>(agent)->getState() != ZOMBIE_IDLE) ||
 		(agent->getType() == PIGMAN && static_cast<Pigman*>(agent)->getState() != PIGMAN_DEATH && static_cast<Pigman*>(agent)->getState() != PIGMAN_IDLE)) {
 		agent->getRigidBody()->velocity = direction * 2.0f;
 		agent->setDistanceWalked(agent->getDistanceWalked() + 2.0f);
-		agent->getTransform()->position += agent->getRigidBody()->velocity;
+
+		if (reverse)
+		{
+			agent->getTransform()->position -= agent->getRigidBody()->velocity;
+		}
+		else
+		{
+			agent->getTransform()->position += agent->getRigidBody()->velocity;
+		}
 
 		//Sound
 		if (agent->getDistanceWalked() >= 60) {
@@ -166,7 +175,7 @@ void Enemy::move(glm::vec2 destination, float currentRotation)
 	}
 }
 
-glm::vec2 Enemy::turn(glm::vec2 destination, float currentRotation)
+glm::vec2 Enemy::turn(glm::vec2 destination, float currentRotation, bool reverse)
 {
 	auto agent = m_decisionTree->getAgent();
 
@@ -175,6 +184,18 @@ glm::vec2 Enemy::turn(glm::vec2 destination, float currentRotation)
 	auto orientation = glm::vec2(cos(currentRotation * Util::Deg2Rad), sin(currentRotation * Util::Deg2Rad));
 
 	auto targetRotation = Util::signedAngle(orientation, direction);
+
+	if (reverse)
+	{
+		if (targetRotation < 180)
+		{
+			targetRotation += 180;
+		}
+		else
+		{
+			targetRotation -= 180;
+		}
+	}
 
 	//turn tha agent accordingly
 	if (abs(targetRotation) > 5.0f) {
@@ -209,4 +230,6 @@ void Enemy::m_checkBounds()
 	{
 		getTransform()->position.y = 0;
 	}
+
+	
 }

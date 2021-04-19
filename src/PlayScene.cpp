@@ -326,17 +326,7 @@ void PlayScene::update()
 	// Zombie off screen deletion
 	for (int i = 0; i < m_pZombieArmy.size(); i++)
 	{
-		if (m_pZombieArmy[i]->getTransform()->position.y <= -100)
-		{
-			removeChild(m_pZombieArmy[i]);
-			m_pZombieArmy[i] = nullptr;
-			m_pZombieArmy.erase(m_pZombieArmy.begin() + i);
-			m_pZombieArmy.shrink_to_fit();
-			m_pZombieCount->setText("Zombie Count: " + std::to_string(m_pZombieArmy.size()));
-			m_enemyNeedsSpawn = true;
-			continue;
-		}
-		if (m_pZombieArmy[i]->getTransform()->position.y >= 700)
+		if (m_pZombieArmy[i]->getTransform()->position.y <= -100 || m_pZombieArmy[i]->getTransform()->position.y >= 700 || m_pZombieArmy[i]->getTransform()->position.x <= -100 || m_pZombieArmy[i]->getTransform()->position.y >= 900)
 		{
 			removeChild(m_pZombieArmy[i]);
 			m_pZombieArmy[i] = nullptr;
@@ -350,17 +340,7 @@ void PlayScene::update()
 	// Delete Piggies if off screen
 	for (int i = 0; i < m_pPigmanSquad.size(); i++)
 	{
-		if (m_pPigmanSquad[i]->getTransform()->position.y <= -100)
-		{
-			removeChild(m_pPigmanSquad[i]);
-			m_pPigmanSquad[i] = nullptr;
-			m_pPigmanSquad.erase(m_pPigmanSquad.begin() + i);
-			m_pPigmanSquad.shrink_to_fit();
-			m_pPigmanCount->setText("Pigman Count: " + std::to_string(m_pPigmanSquad.size()));
-			m_enemyNeedsSpawn = true;
-			continue;
-		}
-		if (m_pPigmanSquad[i]->getTransform()->position.y >= 700)
+		if (m_pPigmanSquad[i]->getTransform()->position.y <= -100 || m_pPigmanSquad[i]->getTransform()->position.y >= 700 || m_pPigmanSquad[i]->getTransform()->position.x <= -100 || m_pPigmanSquad[i]->getTransform()->position.x >= 900)
 		{
 			removeChild(m_pPigmanSquad[i]);
 			m_pPigmanSquad[i] = nullptr;

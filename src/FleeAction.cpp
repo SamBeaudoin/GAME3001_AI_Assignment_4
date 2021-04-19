@@ -15,15 +15,10 @@ FleeAction::~FleeAction()
 
 void FleeAction::Action()
 {
-	auto destination = getAgent()->getTransform()->position;
+	auto destination = static_cast<Enemy*>(getAgent())->getStevePosition() + glm::vec2(20.0f, 20.0f);
 	auto currentRotation = getAgent()->getCurrentHeading();
 
-	if (destination.y >= 300)
-		destination.y = 700;
-	else
-		destination.y = -100;
-
-	static_cast<Enemy*>(getAgent())->move(destination, currentRotation);
+	static_cast<Enemy*>(getAgent())->move(destination, currentRotation, true);
 	
 	if (getAgent()->getType() == ZOMBIE) {
 		if (static_cast<Zombie*>(getAgent())->getState() != ZOMBIE_DAMAGED && static_cast<Zombie*>(getAgent())->getState() != ZOMBIE_DEATH)
