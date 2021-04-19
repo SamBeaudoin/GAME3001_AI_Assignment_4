@@ -3,22 +3,10 @@
 #include "SoundManager.h"
 #include "TextureManager.h"
 
-DestroyableObstacle::DestroyableObstacle()
+DestroyableObstacle::DestroyableObstacle(glm::vec2 pos) : Obstacle(pos, "bricks")
 {
-	TextureManager::Instance()->load("../Assets/sprites/MineCraft_Bush.png", "obstacle");
-
-	auto size = TextureManager::Instance()->getTextureSize("obstacle");
-	setWidth(size.x);
-	setHeight(size.y);
-
-	getTransform()->position = glm::vec2(300.0f, 300.0f);
-
 	m_health = 3;
-
-	setType(OBSTACLE);
-	getRigidBody()->isColliding = false;
-
-	SoundManager::Instance().load("../Assets/audio/yay.ogg", "yay", SOUND_SFX);
+	setType(DESTROYABLE_OBJECT);
 }
 
 DestroyableObstacle::~DestroyableObstacle()
@@ -26,14 +14,7 @@ DestroyableObstacle::~DestroyableObstacle()
 
 void DestroyableObstacle::draw()
 {
-	TextureManager::Instance()->draw("obstacle",
-		getTransform()->position.x, getTransform()->position.y, 0, 255, true);
-
-	if (getDebugMode()) {
-		SDL_Rect colliderBoundry = { getTransform()->position.x - (getWidth() / 2), getTransform()->position.y - (getHeight() / 2), getWidth(), getHeight() };
-		SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 0, 0, 0, 255);
-		SDL_RenderDrawRect(Renderer::Instance()->getRenderer(), &colliderBoundry);
-	}
+	Obstacle::draw();
 
 	SDL_Rect rect = { getTransform()->position.x - 30, getTransform()->position.y - 50, 20 * m_health, 10 };
 
@@ -48,10 +29,12 @@ void DestroyableObstacle::draw()
 
 void DestroyableObstacle::update()
 {
+	Obstacle::update();
 }
 
 void DestroyableObstacle::clean()
 {
+	Obstacle::clean();
 }
 
 bool DestroyableObstacle::getDebugMode() const

@@ -9,15 +9,16 @@ class Obstacle : public DisplayObject
 {
 public:
 	// constructors
-	Obstacle();
+	Obstacle() {};
+	Obstacle(glm::vec2 pos, std::string sprite);
 
 	// destructor
 	~Obstacle();
 
 	// life cycle functions
-	void draw() override;
-	void update() override;
-	void clean() override;
+	virtual void draw() override;
+	virtual void update() override;
+	virtual void clean() override;
 
 	bool getDebugMode() const;
 	void setDebugMode(bool mode);
@@ -30,6 +31,7 @@ protected:
 
 private:
 	bool m_debugMode;
+	std::string m_sprite;
 };
 
 #endif /* defined (__OBSTACLE__) */

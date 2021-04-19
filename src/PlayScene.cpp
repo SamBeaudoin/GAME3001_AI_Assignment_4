@@ -128,68 +128,83 @@ void PlayScene::update()
 	}
 
 	// Destroyable Obstacle Checks
-	if (m_pDestroyable != nullptr)
-	{
-		for (auto nodes : m_pGrid)
+	for (int i = 0; i < m_pObstacles.size(); i++) {
+
+		if (m_pObstacles[i]->getType() == DESTROYABLE_OBJECT)
 		{
-			if (CollisionManager::AABBCheck(m_pDestroyable, nodes))
+
+			// Melee Destroyable
+			m_CheckForLOS(m_pSteve, m_pObstacles[i]);
+			if (m_pSteve->getState() == STEVE_ATTACK && m_pSteve->hasLOS())
 			{
-				nodes->setEnabled(false);
+				static_cast<DestroyableObstacle*>(m_pObstacles[i])->takeDamage();
 			}
 		}
+	}
 
-		// Melee Destroyable
-		m_CheckForLOS(m_pSteve, m_pDestroyable);
-		if (m_pSteve->getState() == STEVE_ATTACK && m_pSteve->hasLOS())
-		{
-			m_pDestroyable->takeDamage();
-		}
-
-		// Shooting Destroyable obstacle
-		for (int i = 0; i < m_pArrowQuiver.size(); i++)
-		{
-			if (CollisionManager::AABBCheck(m_pArrowQuiver[i], m_pDestroyable))
+	for (int i = 0; i < m_pGoldenNuggies.size(); i++)
+	{
+		for (int j = 0; j < m_pObstacles.size(); j++)
+			if (CollisionManager::AABBCheck(m_pGoldenNuggies[i], m_pObstacles[j]))
 			{
-				removeChild(m_pArrowQuiver[i]);
-				m_pArrowQuiver[i] = nullptr;
-				m_pArrowQuiver.erase(m_pArrowQuiver.begin() + i);
-				m_pArrowQuiver.shrink_to_fit();
-				m_pDestroyable->takeDamage();
+				if (m_pObstacles[j]->getType() == DESTROYABLE_OBJECT) {
+					static_cast<DestroyableObstacle*>(m_pObstacles[j])->takeDamage();
+
+					if (static_cast<DestroyableObstacle*>(m_pObstacles[j])->getHealth() <= 0)
+					{
+						for (auto node : m_pGrid) {
+							if (CollisionManager::AABBCheck(node, m_pObstacles[j]->GetDetection())) {
+								if (!node->isEnabled())
+									node->setEnabled(true);
+							}
+						}
+
+						removeChild(m_pObstacles[j]);
+						m_pObstacles[j] = nullptr;
+						m_pObstacles.erase(m_pObstacles.begin() + j);
+						m_pObstacles.shrink_to_fit();
+					}
+				}
+
+				removeChild(m_pGoldenNuggies[i]);
+				m_pGoldenNuggies[i] = nullptr;
+				m_pGoldenNuggies.erase(m_pGoldenNuggies.begin() + i);
+				m_pGoldenNuggies.shrink_to_fit();
+
 				break;
 			}
-		}
-
-		// Delete Destroyable Obstacle
-		if (m_pDestroyable->getHealth() <= 0)
-		{
-			removeChild(m_pDestroyable);
-			m_pDestroyable = nullptr;
-			delete m_pDestroyable;
-			m_pLOSDisplayObjects.pop_back();
-			m_pLOSDisplayObjects.shrink_to_fit();
-		}
 	}
 
-	// enable hidden nodes behind Destructible obstacle
-	if (m_pDestroyable == nullptr)
-	{
-		for (auto nodes : m_pGrid)
-		{
-			if (!nodes->isEnabled())
-				nodes->setEnabled(true);
-		}
-	}
-
-	// Delete Arrows
+	//Delete Arrows
 	for (int i = 0; i < m_pArrowQuiver.size(); i++)
 	{
 		for (int j = 0; j < m_pObstacles.size(); j++)
 			if (CollisionManager::AABBCheck(m_pArrowQuiver[i], m_pObstacles[j]))
 			{
+				if (m_pObstacles[j]->getType() == DESTROYABLE_OBJECT) {
+					static_cast<DestroyableObstacle*>(m_pObstacles[j])->takeDamage();
+
+					if (static_cast<DestroyableObstacle*>(m_pObstacles[j])->getHealth() <= 0)
+					{
+						for (auto node : m_pGrid) {
+							if (CollisionManager::AABBCheck(node, m_pObstacles[j]->GetDetection())) {
+								if (!node->isEnabled())
+									node->setEnabled(true);
+							}
+						}
+
+						removeChild(m_pObstacles[j]);
+						m_pObstacles[j] = nullptr;
+						m_pObstacles.erase(m_pObstacles.begin() + j);
+						m_pObstacles.shrink_to_fit();
+					}
+				}
+
 				removeChild(m_pArrowQuiver[i]);
 				m_pArrowQuiver[i] = nullptr;
 				m_pArrowQuiver.erase(m_pArrowQuiver.begin() + i);
 				m_pArrowQuiver.shrink_to_fit();
+
 				break;
 			}
 	}
@@ -344,17 +359,7 @@ void PlayScene::update()
 	// Zombie off screen deletion
 	for (int i = 0; i < m_pZombieArmy.size(); i++)
 	{
-		if (m_pZombieArmy[i]->getTransform()->position.y <= -100)
-		{
-			removeChild(m_pZombieArmy[i]);
-			m_pZombieArmy[i] = nullptr;
-			m_pZombieArmy.erase(m_pZombieArmy.begin() + i);
-			m_pZombieArmy.shrink_to_fit();
-			m_pZombieCount->setText("Zombie Count: " + std::to_string(m_pZombieArmy.size()));
-			m_enemyNeedsSpawn = true;
-			continue;
-		}
-		if (m_pZombieArmy[i]->getTransform()->position.y >= 700)
+		if (m_pZombieArmy[i]->getTransform()->position.y <= -100 || m_pZombieArmy[i]->getTransform()->position.y >= 700 || m_pZombieArmy[i]->getTransform()->position.x <= -100 || m_pZombieArmy[i]->getTransform()->position.y >= 900)
 		{
 			removeChild(m_pZombieArmy[i]);
 			m_pZombieArmy[i] = nullptr;
@@ -368,17 +373,7 @@ void PlayScene::update()
 	// Delete Piggies if off screen
 	for (int i = 0; i < m_pPigmanSquad.size(); i++)
 	{
-		if (m_pPigmanSquad[i]->getTransform()->position.y <= -100)
-		{
-			removeChild(m_pPigmanSquad[i]);
-			m_pPigmanSquad[i] = nullptr;
-			m_pPigmanSquad.erase(m_pPigmanSquad.begin() + i);
-			m_pPigmanSquad.shrink_to_fit();
-			m_pPigmanCount->setText("Pigman Count: " + std::to_string(m_pPigmanSquad.size()));
-			m_enemyNeedsSpawn = true;
-			continue;
-		}
-		if (m_pPigmanSquad[i]->getTransform()->position.y >= 700)
+		if (m_pPigmanSquad[i]->getTransform()->position.y <= -100 || m_pPigmanSquad[i]->getTransform()->position.y >= 700 || m_pPigmanSquad[i]->getTransform()->position.x <= -100 || m_pPigmanSquad[i]->getTransform()->position.x >= 900)
 		{
 			removeChild(m_pPigmanSquad[i]);
 			m_pPigmanSquad[i] = nullptr;
@@ -397,9 +392,9 @@ void PlayScene::update()
 		{
 			Zombie* zomb = new Zombie();
 			zomb->getTransform()->position = glm::vec2(707.0f, -90.0f);
-			zomb->setDestinationNode(m_pMapNodes[6]);
-			zomb->AddNode(m_pMapNodes[6]);
-			zomb->AddNode(m_pMapNodes[3]);
+			zomb->setDestinationNode(m_pMapNodes[4]);
+			zomb->AddNode(m_pMapNodes[4]);
+			zomb->AddNode(m_pMapNodes[2]);
 			zomb->AddNode(m_pMapNodes[0]);
 			zomb->setDebugMode(m_debugIsOn);
 			addChild(zomb);
@@ -415,8 +410,8 @@ void PlayScene::update()
 			addChild(pig);
 			pig->setDestinationNode(m_pMapNodes[5]);
 			pig->AddNode(m_pMapNodes[5]);
-			pig->AddNode(m_pMapNodes[2]);
-			pig->AddNode(m_pMapNodes[8]);
+			pig->AddNode(m_pMapNodes[3]);
+			pig->AddNode(m_pMapNodes[1]);
 			pig->setDebugMode(m_debugIsOn);
 			m_pPigmanSquad.push_back(pig);
 			m_pPigmanCount->setText("Pigman Count: " + std::to_string(m_pPigmanSquad.size()));
@@ -453,13 +448,6 @@ void PlayScene::updateCollisions()
 			if (CollisionManager::AABBCheck(enemy, obstacle->GetDetection()))
 				enemy->setDetectRect(obstacle->GetDetection());
 		}
-	}
-	if (m_pDestroyable != nullptr)
-	{
-		for (auto enemy : m_pGangOfEnemies)
-			CollisionManager::AABBCheck(enemy, m_pDestroyable);
-
-		CollisionManager::AABBCheck(m_pSteve, m_pDestroyable);
 	}
 }
 
@@ -692,101 +680,60 @@ void PlayScene::start()
 	addChild(m_pSteve, 2);
 	m_pLOSDisplayObjects.push_back(m_pSteve);
 
-	//Obstacles
-	//m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, -50.0f)));
-	//m_pObstacles.push_back(new Tree(glm::vec2(150.0f, -50.0f)));
-	//m_pObstacles.push_back(new Tree(glm::vec2(350.0f, -50.0f)));
-	//m_pObstacles.push_back(new Tree(glm::vec2(550.0f, -50.0f)));
-	//m_pObstacles.push_back(new Tree(glm::vec2(750.0f, -50.0f)));
-
-	//m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, 150.0f)));
-	//m_pObstacles.push_back(new Tree(glm::vec2(850.0f, 150.0f)));
-	//m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, 350.0f)));
-	//m_pObstacles.push_back(new Tree(glm::vec2(850.0f, 350.0f)));
-	//m_pObstacles.push_back(new Tree(glm::vec2(-50.0f, 550.0f)));
-	//m_pObstacles.push_back(new Tree(glm::vec2(850.0f, 550.0f)));
-
-	//m_pObstacles.push_back(new Tree(glm::vec2(150.0f, 650.0f)));
-	//m_pObstacles.push_back(new Tree(glm::vec2(350.0f, 650.0f)));
-	//m_pObstacles.push_back(new Tree(glm::vec2(550.0f, 650.0f)));
-	//m_pObstacles.push_back(new Tree(glm::vec2(750.0f, 650.0f)));
-
 	//Obstacles in the middle of the map
 	//m_pObstacles.push_back(new Tree(glm::vec2(225.0f, 225.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(225.0f, 375.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(545.0f, 300.0f)));
-	m_pObstacles.push_back(new Tree(glm::vec2(585.0f, 335.0f)));
+	m_pObstacles.push_back(new Tree(glm::vec2(225.0f, 150.0f)));
+	m_pObstacles.push_back(new DestroyableObstacle(glm::vec2(400.0f, 150.0f)));
+	m_pObstacles.push_back(new Tree(glm::vec2(575.0f, 150.0f)));
+	m_pObstacles.push_back(new DestroyableObstacle(glm::vec2(150.0f, 300.0f)));
+	m_pObstacles.push_back(new DestroyableObstacle(glm::vec2(650.0f, 300.0f)));
+	m_pObstacles.push_back(new Tree(glm::vec2(225.0f, 450.0f)));
+	m_pObstacles.push_back(new DestroyableObstacle(glm::vec2(400.0f, 450.0f)));
+	m_pObstacles.push_back(new Tree(glm::vec2(575.0f, 450.0f)));
+	//m_pObstacles.push_back(new DestroyableObstacle(glm::vec2(200.0f, 600.0f)));
+	//m_pObstacles.push_back(new DestroyableObstacle(glm::vec2(200.0f, 520.0f)));
+	//m_pObstacles.push_back(new DestroyableObstacle(glm::vec2(600.0f, 250.0f)));
+	//m_pObstacles.push_back(new DestroyableObstacle(glm::vec2(400.0f, 520.0f)));
 	
 	for (auto obstacle : m_pObstacles) {
 		obstacle->UpdateDetection();
 		addChild(obstacle);
-		m_pLOSDisplayObjects.push_back(obstacle);
 	}
-
-	// Destroyable Obstacle
-	m_pDestroyable = new DestroyableObstacle();
-	m_pDestroyable->getTransform()->position = glm::vec2(225.0f, 225.0f);
-	addChild(m_pDestroyable);
-	m_pLOSDisplayObjects.push_back(m_pDestroyable);
 
 	// Build Grid
 	m_buildGrid();
 
 	//nodes for navigation
 	m_pMapNodes.push_back(new MapNodes(glm::vec2(30.0f, 50.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(30.0f, 300.0f)));
 	m_pMapNodes.push_back(new MapNodes(glm::vec2(30.0f, 550.0f)));
 	m_pMapNodes.push_back(new MapNodes(glm::vec2(350.0f, 50.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(350.0f, 300.0f)));
 	m_pMapNodes.push_back(new MapNodes(glm::vec2(350.0f, 550.0f)));
 	m_pMapNodes.push_back(new MapNodes(glm::vec2(750.0f, 50.0f)));
-	m_pMapNodes.push_back(new MapNodes(glm::vec2(750.0f, 300.0f)));
 	m_pMapNodes.push_back(new MapNodes(glm::vec2(750.0f, 550.0f)));
 
 	for (auto nodes : m_pMapNodes)
 		addChild(nodes);
 
-	// add Zombies and set their paths
-	/*Zombie* zomb = new Zombie();
-	zomb->getTransform()->position = m_pMapNodes[6]->getNodeMiddle();
-	zomb->AddNode(m_pMapNodes[6]);
+	Zombie* zomb = new Zombie();
+	zomb->getTransform()->position = m_pMapNodes[5]->getNodeMiddle();
+	addChild(zomb);
+	zomb->AddNode(m_pMapNodes[5]);
 	zomb->AddNode(m_pMapNodes[3]);
 	zomb->setDestinationNode(m_pMapNodes[3]);
-	zomb->AddNode(m_pMapNodes[0]);
-	addChild(zomb);
-	m_pZombieArmy.push_back(zomb);
-	m_pGangOfEnemies.push_back(zomb);*/
-
-	Zombie* zomb = new Zombie();
-	zomb->getTransform()->position = m_pMapNodes[8]->getNodeMiddle();
-	addChild(zomb);
-	zomb->AddNode(m_pMapNodes[8]);
-	zomb->AddNode(m_pMapNodes[5]);
-	zomb->setDestinationNode(m_pMapNodes[5]);
-	zomb->AddNode(m_pMapNodes[2]);
+	zomb->AddNode(m_pMapNodes[1]);
 	m_pZombieArmy.push_back(zomb);
 	m_pGangOfEnemies.push_back(zomb);
 
 	// Pigman Path
 	Pigman* pig = new Pigman();
-	pig->getTransform()->position = m_pMapNodes[3]->getNodeMiddle();
-	pig->AddNode(m_pMapNodes[3]);
+	pig->getTransform()->position = m_pMapNodes[4]->getNodeMiddle();
+	pig->AddNode(m_pMapNodes[4]);
+	pig->AddNode(m_pMapNodes[2]);
+	pig->setDestinationNode(m_pMapNodes[2]);
 	pig->AddNode(m_pMapNodes[0]);
-	pig->setDestinationNode(m_pMapNodes[0]);
-	pig->AddNode(m_pMapNodes[6]);
 	addChild(pig);
 	m_pPigmanSquad.push_back(pig);
 	m_pGangOfEnemies.push_back(pig);
-
-	/*pig = new Pigman();
-	pig->getTransform()->position = m_pMapNodes[5]->getNodeMiddle();
-	addChild(pig);
-	pig->AddNode(m_pMapNodes[5]);
-	pig->AddNode(m_pMapNodes[2]);
-	pig->setDestinationNode(m_pMapNodes[2]);
-	pig->AddNode(m_pMapNodes[8]);
-	m_pPigmanSquad.push_back(pig);
-	m_pGangOfEnemies.push_back(pig);*/
 
 	//Labels
 	m_pHealth = new Label("Current HP: ", "Minecraft", 30);
@@ -867,7 +814,7 @@ void PlayScene::m_CheckForLOS(Agent* first_object, DisplayObject* target_object)
 		std::vector<DisplayObject*> contactList;
 		for (auto object : getDisplayList())
 		{
-			if ((object->getType() == PLAYER || object->getType() == OBSTACLE) && first_object != object) {
+			if ((object->getType() == PLAYER || object->getType() == OBSTACLE || object->getType() == DESTROYABLE_OBJECT) && first_object != object) {
 
 				// check if obstacle is farther than than the object
 				auto AgentToObstacleDistance = Util::distance(first_object->getTransform()->position, object->getTransform()->position);
@@ -930,10 +877,16 @@ void PlayScene::m_buildGrid()
 			{
 				if (CollisionManager::AABBCheck(path_node, obstacle->GetDetection()))
 				{
-					delete path_node;
-					path_node = nullptr;
-					isColliding = true;
-					break;
+					if (obstacle->getType() == DESTROYABLE_OBJECT)
+					{
+						path_node->setEnabled(false);
+					}
+					else {
+						delete path_node;
+						path_node = nullptr;
+						isColliding = true;
+						break;
+					}
 				}
 			}
 			if (!isColliding)
@@ -956,7 +909,7 @@ bool PlayScene::m_CheckForEnemyLOS(PathNode* node, Enemy* enemy)
 
 		for (auto display_object : m_pObstacles) {
 
-			if (display_object->getType() == OBSTACLE) {
+			if (display_object->getType() == OBSTACLE || display_object->getType() == DESTROYABLE_OBJECT) {
 				auto NodeToObstacleDistance = Util::distance(node->getTransform()->position, display_object->getTransform()->position);
 				const auto nodeTarget = node->getTransform()->position + node->getCurrentDirection() * node->getLOSDistance();
 
@@ -977,7 +930,6 @@ bool PlayScene::m_CheckForEnemyLOS(PathNode* node, Enemy* enemy)
 		const auto nodeTarget = node->getTransform()->position + node->getCurrentDirection() * node->getLOSDistance();
 
 		hasLOS = CollisionManager::LOSCheck(node, nodeTarget, contactList, enemy);
-		//node->setHasEnemyLOS(hasLOS);
 	}
 	else
 	{
@@ -1022,7 +974,7 @@ void PlayScene::m_findClosestPathNodeWithLOS(Agent* agent)
 
 	for (auto path_node : m_pGrid)
 	{
-		if (path_node->hasLOS() && path_node->hasEnemyLOS())
+		if (path_node->hasLOS() && path_node->hasEnemyLOS() && path_node->isEnabled())
 		{
 			const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
 			if (distance < min)
@@ -1043,7 +995,7 @@ void PlayScene::m_findClosestPathNodeWithoutLOS(Agent* agent)
 
 	for (auto path_node : m_pGrid)
 	{
-		if (!path_node->hasLOS())
+		if (!path_node->hasLOS() && path_node->isEnabled())
 		{
 			const auto distance = Util::distance(agent->getTransform()->position, path_node->getTransform()->position);
 			if (distance < min)

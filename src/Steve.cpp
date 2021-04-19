@@ -6,6 +6,7 @@
 #include "Renderer.h"
 #include "Util.h"
 #include "EventManager.h"
+#include "FleeAction.h"
 
 Steve::Steve() : m_maxSpeed(10.0f)
 {

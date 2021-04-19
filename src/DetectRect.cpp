@@ -1,5 +1,6 @@
 #include "DetectRect.h"
 #include "Renderer.h"
+#include "CollisionManager.h"
 
 DetectRect::DetectRect()
 {
@@ -58,15 +59,29 @@ CollidingSide DetectRect::getCollidingSide(DisplayObject* object)
 {
 	const auto position = object->getTransform()->position - glm::vec2(object->getWidth() / 2, object->getHeight() / 2);
 	//const auto obstacle = getObstacle()->getTransform()->position = glm::vec2(getObstacle()->getWidth() / 2, getObstacle()->getHeight() / 2);
-	const auto detection = getTransform()->position - glm::vec2(getWidth() / 2, getHeight() /2);
+	const auto detection = getTransform()->position - glm::vec2(getWidth() / 2, getHeight() / 2);
 
-	if (position.x < (detection.x + getWidth()) && position.x > (detection.x) && position.y > detection.y)
+	if (position.x < (detection.x + getWidth() - 5) && position.x > (detection.x + 5) && position.y > detection.y)
 		return BOTTOM_SIDE;
-	else if (position.x < (detection.x + getWidth()) && position.x > (detection.x) && position.y < detection.y)
+	else if (position.x < (detection.x + getWidth() - 15) && position.x > (detection.x + 5) && position.y < detection.y)
 		return TOP_SIDE;
-	else if (position.y < (detection.y + getHeight()) && position.y > (detection.y) && position.x > detection.x)
+	else if (position.y < (detection.y + getHeight() - 5) && position.y > (detection.y + 5) && position.x > detection.x)
 		return RIGHT_SIDE;
-	else if (position.y < (detection.y + getHeight()) && position.y > (detection.y) && position.x < detection.x)
+	else if (position.y < (detection.y + getHeight() - 5) && position.y > (detection.y + 5) && position.x < detection.x)
 		return LEFT_SIDE;
 	return NO_SIDE;
+
+	//if (CollisionManager::lineRectCheck(glm::vec2(detection.x, detection.y), glm::vec2(detection.x + getWidth(), detection.y),
+	//	position, getWidth(), getHeight()))
+	//	return TOP_SIDE;
+	//else if (CollisionManager::lineRectCheck(glm::vec2(detection.x, detection.y + getHeight()), glm::vec2(detection.x + getWidth(), detection.y + getHeight()),
+	//	position, getWidth(), getHeight()))
+	//	return BOTTOM_SIDE;
+	//else if (CollisionManager::lineRectCheck(glm::vec2(detection.x, detection.y), glm::vec2(detection.x, detection.y + getHeight()),
+	//	position, getWidth(), getHeight()))
+	//	return LEFT_SIDE;
+	//else if (CollisionManager::lineRectCheck(glm::vec2(detection.x + getWidth(), detection.y), glm::vec2(detection.x + getWidth(), detection.y + getHeight()),
+	//	position, getWidth(), getHeight()))
+	//	return RIGHT_SIDE;
+
 }

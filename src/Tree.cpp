@@ -2,9 +2,9 @@
 
 Tree::Tree() : Obstacle() {}
 
-Tree::Tree(glm::vec2 pos) : Obstacle()
+Tree::Tree(glm::vec2 pos) : Obstacle(pos, "obstacle")
 {
-	getTransform()->position = pos;
+	//getTransform()->position = pos;
 }
 
 Tree::~Tree() = default;

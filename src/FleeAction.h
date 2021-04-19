@@ -10,8 +10,9 @@ public:
 	virtual ~FleeAction();
 
 	virtual void Action() override;
-private:
 
+private:
+	glm::vec2 m_playerPosition;
 };
 
 #endif /* defined (__FLEE_ACTION__) */

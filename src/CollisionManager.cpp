@@ -88,7 +88,25 @@ bool CollisionManager::AABBCheck(GameObject* object1, GameObject* object2)
 				object1->getRigidBody()->velocity.x = 0.0f;
 				object1->getTransform()->position.x = p2.x + p2Width + (p1Width / 2);
 			}
-
+			break;
+		case DESTROYABLE_OBJECT:
+			if (round(p1.y + p1Width - v1.y) <= round(p2.y)) {
+				object1->getRigidBody()->velocity.y = 0.0f;
+				object1->getTransform()->position.y = p2.y - (p1Height / 2);
+			}
+			else if (round(p1.y - v1.y) >= round(p2.y + p2Height)) {
+				object1->getRigidBody()->velocity.y = 0.0f;
+				object1->getTransform()->position.y = p2.y + p2Height + (p1Height / 2);
+			}
+			else if (round(p1.x + p1Width - v1.x) <= round(p2.x)) {
+				object1->getRigidBody()->velocity.x = 0.0f;
+				object1->getTransform()->position.x = p2.x - (p1Width / 2);
+			}
+			else if (round(p1.x - v1.x) >= round(p2.x + p2Width)) {
+				object1->getRigidBody()->velocity.x = 0.0f;
+				object1->getTransform()->position.x = p2.x + p2Width + (p1Width / 2);
+			}
+			break;
 		}
 			return true;
 	}
@@ -409,6 +427,10 @@ bool CollisionManager::LOSCheck(Agent* agent, glm::vec2 end_point, const std::ve
 		switch (object->getType())
 		{
 		case OBSTACLE:
+			if (lineRectCheck(start_point, end_point, rect_start, width, height))
+				return false;
+			break;
+		case DESTROYABLE_OBJECT:
 			if (lineRectCheck(start_point, end_point, rect_start, width, height))
 				return false;
 			break;
