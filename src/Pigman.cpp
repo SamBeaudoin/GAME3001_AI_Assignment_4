@@ -81,7 +81,7 @@ void Pigman::update()
 		m_soundCooldown--;
 		if (m_soundCooldown == 0) {
 			m_soundCooldown = (rand() % 301) + 300;
-			SoundManager::Instance().playSound("zombieIdle" + std::to_string(rand() % 3));
+			SoundManager::Instance().playSound("pigmanIdle");
 		}
 	}
 

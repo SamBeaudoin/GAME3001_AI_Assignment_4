@@ -24,11 +24,21 @@ public:
 	void takeDamage();
 	int getHealth();
 
+	void startDespawnTimer();
+	void updateDespawnTimer();
+	int getDespawnTimer();
+
+	void setIsDestroyed(bool destroyed);
+	bool isDestroyed();
+
 private:
 	virtual void m_buildAnimations();
 
 	bool m_debugMode;
 	HealthBar m_health;
+
+	int m_despawnTimer;
+	bool m_isDestroyed;
 };
 
 #endif /* defined (__OBSTACLE__) */

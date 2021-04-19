@@ -109,7 +109,7 @@ void PlayScene::update()
 				static_cast<Pigman*>(m_pPigmanSquad[i])->setState(PIGMAN_DEATH);
 			}
 			else {
-				SoundManager::Instance().playSound("pigmanHurt" + std::to_string(rand() % 2));
+				SoundManager::Instance().playSound("pigmanHurt");
 				static_cast<Pigman*>(m_pPigmanSquad[i])->resetCooldown();
 				static_cast<Pigman*>(m_pPigmanSquad[i])->startHideCooldown();
 				static_cast<Pigman*>(m_pPigmanSquad[i])->setState(PIGMAN_DAMAGED);
@@ -150,19 +150,10 @@ void PlayScene::update()
 				if (m_pObstacles[j]->getType() == DESTROYABLE_OBJECT) {
 					static_cast<DestroyableObstacle*>(m_pObstacles[j])->takeDamage();
 
-					if (static_cast<DestroyableObstacle*>(m_pObstacles[j])->getHealth() <= 0)
+					if (static_cast<DestroyableObstacle*>(m_pObstacles[j])->getHealth() <= 0 && !static_cast<DestroyableObstacle*>(m_pObstacles[j])->isDestroyed())
 					{
-						for (auto node : m_pGrid) {
-							if (CollisionManager::AABBCheck(node, m_pObstacles[j]->GetDetection())) {
-								if (!node->isEnabled())
-									node->setEnabled(true);
-							}
-						}
-
-						removeChild(m_pObstacles[j]);
-						m_pObstacles[j] = nullptr;
-						m_pObstacles.erase(m_pObstacles.begin() + j);
-						m_pObstacles.shrink_to_fit();
+						static_cast<DestroyableObstacle*>(m_pObstacles[j])->setIsDestroyed(true);
+						SoundManager::Instance().playSound("blockBreak");
 					}
 				}
 
@@ -184,19 +175,10 @@ void PlayScene::update()
 				if (m_pObstacles[j]->getType() == DESTROYABLE_OBJECT) {
 					static_cast<DestroyableObstacle*>(m_pObstacles[j])->takeDamage();
 
-					if (static_cast<DestroyableObstacle*>(m_pObstacles[j])->getHealth() <= 0)
+					if (static_cast<DestroyableObstacle*>(m_pObstacles[j])->getHealth() <= 0 && !static_cast<DestroyableObstacle*>(m_pObstacles[j])->isDestroyed())
 					{
-						for (auto node : m_pGrid) {
-							if (CollisionManager::AABBCheck(node, m_pObstacles[j]->GetDetection())) {
-								if (!node->isEnabled())
-									node->setEnabled(true);
-							}
-						}
-
-						removeChild(m_pObstacles[j]);
-						m_pObstacles[j] = nullptr;
-						m_pObstacles.erase(m_pObstacles.begin() + j);
-						m_pObstacles.shrink_to_fit();
+						static_cast<DestroyableObstacle*>(m_pObstacles[j])->setIsDestroyed(true);
+						SoundManager::Instance().playSound("blockBreak");
 					}
 				}
 
@@ -207,6 +189,31 @@ void PlayScene::update()
 
 				break;
 			}
+	}
+
+	//Update Animations of destructables
+	for (int i = 0; i < m_pObstacles.size(); i++) {
+		if (m_pObstacles[i]->getType() == DESTROYABLE_OBJECT) {
+			if (static_cast<DestroyableObstacle*>(m_pObstacles[i])->isDestroyed()) {
+
+				if (static_cast<DestroyableObstacle*>(m_pObstacles[i])->getDespawnTimer() == 0) {
+					for (auto node : m_pGrid) {
+						if (CollisionManager::AABBCheck(node, m_pObstacles[i]->GetDetection())) {
+							if (!node->isEnabled())
+								node->setEnabled(true);
+						}
+					}
+
+					removeChild(m_pObstacles[i]);
+					m_pObstacles[i] = nullptr;
+					m_pObstacles.erase(m_pObstacles.begin() + i);
+					m_pObstacles.shrink_to_fit();
+					break;
+				}
+				else
+					static_cast<DestroyableObstacle*>(m_pObstacles[i])->updateDespawnTimer();
+			}
+		}
 	}
 
 	// Arrow deletion with Zombois
@@ -262,7 +269,7 @@ void PlayScene::update()
 					static_cast<Pigman*>(m_pPigmanSquad[j])->setState(PIGMAN_DEATH);
 				}
 				else {
-					SoundManager::Instance().playSound("pigmanHurt" + std::to_string(rand() % 2));
+					SoundManager::Instance().playSound("pigmanHurt");
 					static_cast<Pigman*>(m_pPigmanSquad[j])->resetCooldown();
 					static_cast<Pigman*>(m_pPigmanSquad[j])->startHideCooldown();
 					static_cast<Pigman*>(m_pPigmanSquad[j])->setState(PIGMAN_DAMAGED);
@@ -560,7 +567,7 @@ void PlayScene::handleEvents()
 					static_cast<Pigman*>(m_pPigmanSquad[i])->setState(PIGMAN_DEATH);
 				}
 				else {
-					SoundManager::Instance().playSound("pigmanHurt" + std::to_string(rand() % 2));
+					SoundManager::Instance().playSound("pigmanHurt");
 					static_cast<Pigman*>(m_pPigmanSquad[i])->resetCooldown();
 					static_cast<Pigman*>(m_pPigmanSquad[i])->setState(PIGMAN_DAMAGED);
 				}
@@ -854,6 +861,10 @@ void PlayScene::loadSounds() {
 	SoundManager::Instance().load("../Assets/audio/Zombie_hurt1.ogg", "zombieHurt0", SOUND_SFX);
 	SoundManager::Instance().load("../Assets/audio/Zombie_hurt2.ogg", "zombieHurt1", SOUND_SFX);
 	SoundManager::Instance().load("../Assets/audio/Zombie_death.ogg", "zombieDeath", SOUND_SFX);
+	SoundManager::Instance().load("../Assets/audio/Pigman_idle.ogg", "pigmanIdle", SOUND_SFX);
+	SoundManager::Instance().load("../Assets/audio/Pigman_hurt.ogg", "pigmanHurt", SOUND_SFX);
+	SoundManager::Instance().load("../Assets/audio/Pigman_death.ogg", "pigmanDeath", SOUND_SFX);
+	SoundManager::Instance().load("../Assets/audio/Block_Break.ogg", "blockBreak", SOUND_SFX);
 }
 
 void PlayScene::m_buildGrid()
